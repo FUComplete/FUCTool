@@ -1,0 +1,124 @@
+{
+	"config.bin": [{
+		"description": "<b><u>File Replacer Path</u></b><br><br><tt>DISC0</tt> - Loads files from <b>disc0:/FUC/nativePSP/</b> <i>(ISO)</i>.<br><tt>MS0</tt> - Loads files from <b>ms0:/FUC/nativePSP/</b> <i>(Memory Stick)</i>.",
+		"options": {
+			"offset": "0x0004",
+			"values": [{
+				"label": "DISC0",
+				"data": "0x00"
+			}, {
+				"label": "MS0",
+				"data": "0x01"
+			}]
+		}
+	}, {
+		"description": "<b><u>Save Region</u></b><br><br><tt>ULJM05500</tt> - Load Japanese Portable 2nd G saves.<br><tt>ULUS10391</tt> - Load North American Freedom Unite saves.<br><tt>ULES00123</tt> - Load European Freedom Unite saves.",
+		"options": {
+			"offset": "0x0005",
+			"values": [{
+				"label": "ULJM05500",
+				"data": "0x00"
+			}, {
+				"label": "ULUS10391",
+				"data": "0x01"
+			}, {
+				"label": "ULES00123",
+				"data": "0x02"
+			}]
+		}
+	}, {
+		"description": "<b><u>True Raw/Ele/Status Display</u></b><br><br>When enabled, removes the 'bloat' modifiers on weapons to display the true raw,<br>element and status.",
+		"options": {
+			"offset": "0x0006",
+			"values": [{
+				"label": "Disable",
+				"data": "0x00"
+			}, {
+				"label": "Enable",
+				"data": "0x01"
+			}]
+		}
+	}, {
+		"description": "<b><u>Dos Audio</u></b><br><br>When enabled, replaces <A href=\"https://youtu.be/wP1Tiq74gWs\">Jungle</A>, <A href=\"https://youtu.be/Hjf1QfiTBbY\">Desert</A>, <A href=\"https://youtu.be/ZRQT-QYB0_I\">Swamp</A>, <A href=\"https://youtu.be/7T0Vp7okMhE\">Snowy Mountain</A>, <A href=\"https://youtu.be/vHSCNxTjX1c\">Volcano</A> and <A href=\"https://youtu.be/f5ZNBm9EuEc\">Tower</A><br>battle themes with their Monster Hunter Dos counterparts.",
+		"options": {
+			"offset": "0x0007",
+			"values": [{
+				"label": "Disable",
+				"data": "0x00"
+			}, {
+				"label": "Enable",
+				"data": "0x01"
+			}]
+		}
+	}, {
+		"description": "<b><u>Field of View</u></b><br><br><tt>Default</tt> - Uses the default FoV value of 0.872<br><tt>Minor</tt> - Sets the FoV value to 0.935<br><tt>Moderate</tt> - Sets the FoV value to 0.997<br><tt>Extreme</tt> - Sets the FoV value to 1.120",
+		"options": {
+			"offset": "0x0008",
+			"values": [{
+				"label": "Default",
+				"data": "0x5F3F"
+			}, {
+				"label": "Minor",
+				"data": "0x6F3F"
+			}, {
+				"label": "Moderate",
+				"data": "0x7F3F"
+			}, {
+				"label": "Extreme",
+				"data": "0x8F3F"
+			}]
+		}
+	}, {
+		"description": "<b><u>Starting Vertical Camera Position</u></b><br><br>Sets the starting vertical position when starting a quest.<br><br><tt>1</tt> - Lowest, pointing towards the ground.<br><tt>2</tt> - Second from lowest.<br><tt>3</tt> - Centered.<br><tt>4</tt> - Default.<br><tt>5</tt> - Highest, pointing towards the sky.",
+		"options": {
+			"offset": "0x000A",
+			"values": [{
+				"label": "1 (Lowest)",
+				"data": "0x00"
+			}, {
+				"label": "2",
+				"data": "0x01"
+			}, {
+				"label": "3 (Middle)",
+				"data": "0x02"
+			}, {
+				"label": "4 (Default)",
+				"data": "0x03"
+			}, {
+				"label": "5 (Highest)",
+				"data": "0x04"
+			}]
+		}
+	}, {
+		"description": "<b><u>Minimap Size</u></b><br><br>Sets the minimap size/scale. If you set to either 75% or 50%, loading screen between<br>areas is also scaled down.</b><br><br><tt>Default</tt> - Original size (100%)<br><tt>75%</tt> - Minimap scaled to 75%<br><tt>50%</tt> - Minimap scaled to 50%",
+		"options": {
+			"offset": "0x000B",
+			"values": [{
+				"label": "Default",
+				"data": "0x00"
+			}, {
+				"label": "75%",
+				"data": "0x01"
+			}, {
+				"label": "50%",
+				"data": "0x02"
+			}]
+		}
+	}, {
+		"description": "<b><u>Hunting Horn Tweak</u></b><br><br>When enabled, applies various hunting horn tweaks to notes and motion values.<br><br>&#x2022; Notes only disappear when the player is staggered/tripped/stunned (roared, paralyzed,<br>knockback, wind pressured, etc) or sheathes their weapon<br>&#x2022; The hilt jab poke attack now does cutting damage and the motion value was reduced<br>from 12 impact to 10 cutting.",
+		"options": {
+			"offset": "0x000C",
+			"values": [{
+				"label": "Disable",
+				"data": "0x00"
+			}, {
+				"label": "Enable",
+				"data": "0x01"
+			}]
+		}
+	}],
+	"optional": [{
+		"label": "MH Dos Audio",
+		"file": "DosAudio.xdelta"
+	}]
+}

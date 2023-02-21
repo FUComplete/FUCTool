@@ -356,7 +356,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if "ULES01213" in path.parent.name:
             self.save_key = "FU.bin"
             mode = 1
-        if  "ULUS10391" in path.parent.name:
+        if "ULUS10391" in path.parent.name:
             self.save_key = "FU.bin"
             mode = 2
         if "ULJM05500" in path.parent.name:
@@ -462,8 +462,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         exe_path = Path(utils.current_path, "bin", "psp-save-w32.exe")
 
         self.quests_save_button.setText("Encrypting...")
-
-        # self.decpath
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
