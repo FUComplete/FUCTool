@@ -304,8 +304,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.decrypt_databin_thread.endSignal.connect(self.decrypt_databin_finished)
 
-    def decrypt_databin_finished(self):
+    def decrypt_databin_finished(self, databin_path):
         self.decrypt_databin_thread.exit()
+
+        old_data_path = Path(utils.temp_folder, "DATA.BIN")
+        os.remove(old_data_path)
+
+        self.patch_align(databin_path)
+
+    def patch_align(self, databin_path):
+        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        patch_path = Path(utils.current_path, "res", "patches", "align.xdelta")
+        utils.create_temp_folder()
+        ndata_path = Path(utils.temp_folder, "DATA.BIN")
+
+        logging.info("Patching DATA.BIN...")
+        self.process2 = QtCore.QProcess()
+        self.process2.finished.connect(self.patch_align_finished)
+        self.process2.start(str(exe_path), ["-d", "-s", str(databin_path), str(patch_path), str(ndata_path)])
+
+    def patch_align_finished(self):
+        self.process2 = None
+
+        data_dec_path = Path(utils.temp_folder, "DATA.BIN.DEC")
+        os.remove(data_dec_path)
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
