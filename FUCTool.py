@@ -190,6 +190,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.quests_right.clicked.connect(self.copy_to_save)
         self.quests_left.clicked.connect(self.copy_from_save)
         self.quests_remove.clicked.connect(self.remove_from_save)
+        self.quests_save_button.clicked.connect(self.encrypt_and_save)
 
     def generic_dialog(self, text, title="Info", mode=0):
         if mode == 0:
@@ -274,7 +275,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.nativepsp_button.setEnabled(True)
 
     def generate_nativepsp_folder(self):
-        inpath = self.replace_path.text()
+        inpath = Path(self.replace_path.text())
         outpath = Path(inpath).parent.absolute().joinpath('nativePSP')
         utils.generate_filebin(inpath, outpath)
 
@@ -326,6 +327,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.quests_folder_table.setItem(i, 1, name)
 
     def scan_quests_save(self):
+        self.quests_save_table.clearContents()
         qsize = len(self.save_quests)
         self.save_count.setText(f"Quests in save ({qsize}/18):")
 
@@ -369,22 +371,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 mode=1, title="Error")
             return
 
-        shutil.copy2(path, Path(path.parent, path.stem + ".BIN.BAK"))  # Backup save just in case
+        shutil.copy2(path, Path(path.parent, path.stem + ".BIN.BAK"))  # TODO: do this when saving, backup save just in case
 
         dec = utils.decrypt_save(path, mode)
-        self.save = dec
+        self.save = bytearray(dec)
         self.save_quests = utils.get_quests_in_save(dec)
         self.scan_quests_save()
-
-    # def decrypt_finished(self):
-    #     self.process3 = None
-    #
-    #     self.save_folder_button.setText("Select")
-    #     self.save = utils.read_file_bytes(self.decpath)
-    #
-    #     self.quests_right.setEnabled(True)
-    #     self.quests_left.setEnabled(True)
-    #     self.quests_save_table.setEnabled(True)
 
     def copy_to_save(self):
         selection = self.quests_folder_table.selectionModel().selectedRows()
@@ -394,9 +386,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.generic_dialog("Not enough slots to add selected quests to save.", mode=1, title="Error")
         else:
             for s in selection:
-                # TODO: encrypt when writting save
-                # enc = utils.encrypt_quest(qfile)
-
                 qfile = self.folder_quests[s.row()]
                 self.save_quests.append(qfile)
 
@@ -446,22 +435,39 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.quests_save_table.clearContents()
         self.scan_quests_save()
 
-    def write_save(self, path):
-        # keypath = Path("res", self.save_key)
-        # utils.create_temp_folder()
-        # decpath = Path(utils.temp_folder, path.stem + ".BIN.DEC")
-        # exe_path = Path(utils.current_path, "bin", "psp-save-w32.exe")
-
-        self.save_folder_button.setText("Decrypting...")
-        self.process3 = QtCore.QProcess()
-        self.process3.finished.connect(self.decrypt_finished)
-        self.process3.start(str(exe_path), ["-d", str(keypath), "5", str(path), str(decpath)])
-
     def encrypt_and_save(self):
+        empty = 18 - len(self.save_quests)
+        empty_quests = [{"bytes": bytearray(), "qid": "", "name": ""} for _ in range(empty)]
+
+        nquests = self.save_quests + empty_quests
+        nsave = utils.add_quests_to_save(self.save, nquests)
+
+        utils.create_temp_folder()
+        encpath = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
+
+        with open(encpath, "wb") as f:
+            f.write(nsave)
+
         keypath = Path("res", self.save_key)
         exe_path = Path(utils.current_path, "bin", "psp-save-w32.exe")
 
+        param_in = Path(self.save_path.text(), "PARAM.SFO")
+        param_out = Path(utils.temp_folder, "PARAM.SFO.TEMP")
+
+        self.quests_save_button.setEnabled(False)
         self.quests_save_button.setText("Encrypting...")
+
+        self.process3 = QtCore.QProcess()
+        self.process3.finished.connect(self.encrypt_finished)
+        self.process3.start(str(exe_path), ["-e", str(keypath), "5", str(encpath), str(param_in), str(param_out)])
+
+    def encrypt_finished(self):
+        self.process3 = None
+
+        # TODO: put a dialog here
+        self.quests_save_button.setText("Save")
+        self.quests_save_button.setEnabled(True)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

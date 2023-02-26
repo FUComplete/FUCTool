@@ -106,7 +106,7 @@ def read_replace_folder(infolder):
             idx = filelist[key]
             existing_files.append({"path": key, "id": idx})
         except KeyError:
-            continue
+            continue  # File is not in the csv
 
     existing_files.sort(key=lambda k: k['id'])
 
@@ -121,7 +121,7 @@ def get_filebin_data(filename):
         if byte != 0x00:
             barray = bitstring.BitArray(uint=byte, length=8)
 
-            for j, bit in enumerate(barray[::-1]):  # type: ignore
+            for j, bit in enumerate(barray[::-1]):
                 if bit:
                     files.append(i * 8 + j)
 
@@ -134,10 +134,13 @@ def generate_filebin(infolder, outfolder):
     file_ids = []
     existing_files = []
     for fi in infiles:
-        key = fi.replace(f"{infolder}/", "")
-        idx = filelist[key]
-        file_ids.append(idx)
-        existing_files.append({"path": fi, "id": idx})
+        try:
+            key = PureWindowsPath(fi).relative_to(infolder).as_posix()
+            idx = filelist[key]
+            file_ids.append(idx)
+            existing_files.append({"path": fi, "id": idx})
+        except KeyError:
+            continue  # File is not in the csv
 
     newbin = bitstring.BitArray(uint=0, length=826 * 8)
 
@@ -228,7 +231,7 @@ def get_quests_in_folder():
             qfile = read_file_bytes(q)
 
         qid, name = get_quest_data(qfile)
-        res.append({"bytes": q, "qid": qid, "name": name})
+        res.append({"bytes": qfile, "qid": qid, "name": name})
 
     res = sorted(res, key=lambda d: d['qid'])
     return res
@@ -246,7 +249,7 @@ def get_quests_in_save(save_file):
 
             if dec is not None:
                 qid, name = get_quest_data(dec)
-                res.append({"bytes": dec, "qid": qid, "name": name})
+                res.append({"bytes": bytearray(dec), "qid": qid, "name": name})
 
     return res
 
@@ -284,6 +287,41 @@ def decrypt_quest(quest):
     return None
 
 
+def add_quests_to_save(save, quests):
+    offsets = []
+    for i in range(QUESTS_START, QUESTS_END, QUESTS_SIZE):
+        offsets.append(i)
+
+    for i, q in enumerate(quests):
+        # Quest data
+        qenc = encrypt_quest(q["bytes"])
+        qsize = len(qenc)
+
+        for j in range(qsize):
+            save[offsets[i]+j] = qenc[j]
+
+        # Padding
+        padding = (offsets[i] + QUESTS_SIZE) - (offsets[i] + qsize)
+        for j in range(padding):
+            save[offsets[i]+qsize+j] = 0x00
+
+        # Quest filename
+        fname = f"m{q['qid']}.mib"
+        nsize = len(fname)
+        fname = fname.encode()
+
+        noff = offsets[i] + QUESTS_SIZE - 0x10
+        for j in range(nsize):
+            save[noff+j] = fname[j]
+
+        # Padding
+        padding = 0x10 - nsize
+        for j in range(padding):
+            save[noff+nsize+j] = 0x00
+
+    return save
+
+
 def get_config_json(filename):
     with open(filename) as f:
         nconfig = json.loads(f.read())
@@ -303,6 +341,6 @@ def get_filelist(filename):
 
 config = get_config_json("res/config.json")
 filelist = get_filelist("res/filelist_2g.csv")
-# current_path = Path(sys.executable).parent.resolve()
-current_path = Path(__file__).resolve().parent
+current_path = Path(sys.executable).parent.resolve()
+# current_path = Path(__file__).resolve().parent
 temp_folder = Path(current_path, "res", "temp")
