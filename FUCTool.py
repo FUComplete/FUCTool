@@ -7,8 +7,10 @@ import shutil
 import sys
 from pathlib import Path
 
+import pycdlib
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from io import BytesIO
 
 import utils
 from qt_ui import Ui_MainWindow
@@ -119,6 +121,29 @@ class ISOHashThread(QtCore.QThread):
         self.endSignal.emit(file_hash.hexdigest())
 
 
+class ExtractDATABINThread(QtCore.QThread):
+    endSignal = QtCore.pyqtSignal(str)
+
+    def __init__(self, filepath):
+        super().__init__()
+        self.filepath = filepath
+
+    def run(self):
+        iso = pycdlib.PyCdlib()
+        iso.open(self.filepath)
+
+        data_bin = BytesIO()
+        iso.get_file_from_iso_fp(data_bin, iso_path='/PSP_GAME/USRDIR/DATA.BIN')
+
+        iso.close()
+
+        data_bin_path = Path(utils.temp_folder, "DATA.BIN")
+        with open(data_bin_path, "wb") as f:
+            f.write(data_bin.getbuffer())
+
+        self.endSignal.emit(str(data_bin_path))
+
+
 class QuestsReadThread(QtCore.QThread):
     endSignal = QtCore.pyqtSignal(str)
 
@@ -127,13 +152,13 @@ class QuestsReadThread(QtCore.QThread):
         self.folderpath = folderpath
 
 
-
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
         self.iso_hash_thread = None
+        self.extract_databin_thread = None
         self.dump_thread = None
 
         self.process1 = None  # UMD-Replace.exe
@@ -141,6 +166,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process3 = None  # psp-save.exe
 
         self.iso_hash = None
+        self.current_iso_path = None
 
         self.folder_quests = []
         self.save_quests = []
@@ -244,40 +270,51 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"UMD: {utils.UMD_MD5HASH}")
             logging.error(f"PSN: {utils.UMD_MD5HASH}")
 
+    def extract_databin(self):
+        logging.info("Extracting DATA.BIN from ISO...")
+        self.extract_databin_thread = ExtractDATABINThread(self.current_iso_path)
+        self.extract_databin_thread.start()
+
+        self.extract_databin_thread.endSignal.connect(self.extract_databin_finished)
+
+    def extract_databin_finished(self, databin_path):
+        # logging.info(str(databin_path))
+        self.extract_databin_thread.exit()
+
     def patch_compat(self, iso_path):
         exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
         utils.create_temp_folder()
         niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+        self.current_iso_path = niso_path
 
         logging.info("UMD ISO found, applying compat patch...")
         self.process2 = QtCore.QProcess()
-        self.process2.finished.connect(self.compat_finished)
-        self.process2.error.connect(self.compat_error)
+        self.process2.finished.connect(self.patch_compat_finished)
         self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
 
-    def compat_finished(self):
+    def patch_compat_finished(self):
         logging.info("Compat patching done.")
         self.process2 = None
 
-    def compat_error(self):
-        logging.info("Compat patching error.")
+        self.extract_databin()
 
     def patch_iso(self):
+        self.patch_button.setEnabled(False)
+        self.patch_button.setText("Patching...")
+
         iso_path = Path(self.iso_path.text())
 
         if self.iso_hash == utils.UMD_MD5HASH:
             self.patch_compat(iso_path)
-
-        logging.info("Compat patching done?.")
-
-
 
         # for itm in self.optional_patches:
         #     print(itm.filename, itm.checkbox.isChecked())
 
         # patcher.LOGGER = logging.getLogger()
         # patcher.replace_data_bin("", "")
+        self.patch_button.setEnabled(True)
+        self.patch_button.setText("Save")
 
     def select_config_bin(self):
         options = QtWidgets.QFileDialog.Options()
@@ -434,7 +471,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 mode=1, title="Error")
             return
 
-        shutil.copy2(path, Path(path.parent, path.stem + ".BIN.BAK"))  # TODO: do this when saving, backup save just in case
+        shutil.copy2(path,
+                     Path(path.parent, path.stem + ".BIN.BAK"))  # TODO: do this when saving, backup save just in case
 
         dec = utils.decrypt_save(path, mode)
         self.save = bytearray(dec)
@@ -445,7 +483,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         selection = self.quests_folder_table.selectionModel().selectedRows()
 
         # TODO: Check if it's an arena quest and not add it (and show a dialog)
-        if len(self.save_quests)+len(selection) > 18:
+        if len(self.save_quests) + len(selection) > 18:
             self.generic_dialog("Not enough slots to add selected quests to save.", mode=1, title="Error")
         else:
             for s in selection:
@@ -462,7 +500,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             qfile = self.save_quests[s.row()]
             self.folder_quests.append(qfile)
 
-            fname = "m"+qfile["qid"]+".mib.dec"
+            fname = "m" + qfile["qid"] + ".mib.dec"
             fpath = Path(utils.current_path, "quests", fname)
 
             if fpath.exists():
