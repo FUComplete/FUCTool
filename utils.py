@@ -3,13 +3,16 @@
 
 import csv
 import glob
+import hashlib
 import json
 import os
 import shutil
 import sys
+from io import BytesIO
 from pathlib import Path, PureWindowsPath
 
 import bitstring
+import pycdlib
 
 import mhef.psp
 import mhff.psp.data
@@ -45,6 +48,31 @@ def int_to_bytes(x):
 def create_temp_folder():
     if not temp_folder.exists():
         os.makedirs(temp_folder)
+
+
+def get_iso_hash(isofile):
+    with open(isofile, "rb") as f:
+        file_hash = hashlib.md5()
+        while chunk := f.read(8192):
+            file_hash.update(chunk)
+
+    return file_hash.hexdigest()
+
+
+def extract_data_bin(isofile):
+    iso = pycdlib.PyCdlib()
+    iso.open(isofile)
+
+    data_bin = BytesIO()
+    iso.get_file_from_iso_fp(data_bin, iso_path='/PSP_GAME/USRDIR/DATA.BIN')
+
+    iso.close()
+
+    data_bin_path = Path(temp_folder, "DATA.BIN")
+    with open(data_bin_path, "wb") as f:
+        f.write(data_bin.getbuffer())
+
+    return str(data_bin_path)
 
 
 def write_config(barray, offset, data):

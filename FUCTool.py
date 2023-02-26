@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import hashlib
 import logging
 import os
 import shutil
 import sys
 from pathlib import Path
 
-import pycdlib
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-from io import BytesIO
 
 import utils
 from qt_ui import Ui_MainWindow
@@ -113,12 +110,8 @@ class ISOHashThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
-        with open(self.filepath, "rb") as f:
-            file_hash = hashlib.md5()
-            while chunk := f.read(8192):
-                file_hash.update(chunk)
-
-        self.endSignal.emit(file_hash.hexdigest())
+        iso_hash = utils.get_iso_hash(self.filepath)
+        self.endSignal.emit(iso_hash)
 
 
 class ExtractDATABINThread(QtCore.QThread):
@@ -129,19 +122,8 @@ class ExtractDATABINThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
-        iso = pycdlib.PyCdlib()
-        iso.open(self.filepath)
-
-        data_bin = BytesIO()
-        iso.get_file_from_iso_fp(data_bin, iso_path='/PSP_GAME/USRDIR/DATA.BIN')
-
-        iso.close()
-
-        data_bin_path = Path(utils.temp_folder, "DATA.BIN")
-        with open(data_bin_path, "wb") as f:
-            f.write(data_bin.getbuffer())
-
-        self.endSignal.emit(str(data_bin_path))
+        data_bin_path = utils.extract_data_bin(self.filepath)
+        self.endSignal.emit(data_bin_path)
 
 
 class QuestsReadThread(QtCore.QThread):
@@ -270,17 +252,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"UMD: {utils.UMD_MD5HASH}")
             logging.error(f"PSN: {utils.UMD_MD5HASH}")
 
-    def extract_databin(self):
-        logging.info("Extracting DATA.BIN from ISO...")
-        self.extract_databin_thread = ExtractDATABINThread(self.current_iso_path)
-        self.extract_databin_thread.start()
-
-        self.extract_databin_thread.endSignal.connect(self.extract_databin_finished)
-
-    def extract_databin_finished(self, databin_path):
-        # logging.info(str(databin_path))
-        self.extract_databin_thread.exit()
-
     def patch_compat(self, iso_path):
         exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
@@ -298,6 +269,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = None
 
         self.extract_databin()
+
+    def extract_databin(self):
+        logging.info("Extracting DATA.BIN...")
+        self.extract_databin_thread = ExtractDATABINThread(self.current_iso_path)
+        self.extract_databin_thread.start()
+
+        self.extract_databin_thread.endSignal.connect(self.extract_databin_finished)
+
+    def extract_databin_finished(self, databin_path):
+        logging.info(str(databin_path))
+        self.extract_databin_thread.exit()
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
