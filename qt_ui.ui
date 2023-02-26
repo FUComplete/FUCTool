@@ -128,7 +128,7 @@
        <item>
         <widget class="QCheckBox" name="keep_databin">
          <property name="text">
-          <string notr="true">Keep patched DATA.BIN outside of the ISO.</string>
+          <string notr="true">Keep patched DATA.BIN outside of the ISO (for modders).</string>
          </property>
         </widget>
        </item>

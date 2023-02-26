@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.patcher_verticalLayout.addWidget(self.label_4)
         self.keep_databin = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        self.keep_databin.setText("Keep patched DATA.BIN outside of the ISO.")
+        self.keep_databin.setText("Keep patched DATA.BIN outside of the ISO (for modders).")
         self.keep_databin.setObjectName("keep_databin")
         self.patcher_verticalLayout.addWidget(self.keep_databin)
         self.patch_button = QtWidgets.QPushButton(self.verticalLayoutWidget)

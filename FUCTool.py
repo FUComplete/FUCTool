@@ -114,6 +114,21 @@ class ISOHashThread(QtCore.QThread):
         self.endSignal.emit(iso_hash)
 
 
+class CopyISOThread(QtCore.QThread):
+    endSignal = QtCore.pyqtSignal(str)
+
+    def __init__(self, filepath):
+        super().__init__()
+        self.filepath = filepath
+
+    def run(self):
+        utils.create_temp_folder()
+        tmp_iso = Path(utils.temp_folder, self.filepath.name)
+        shutil.copy2(self.filepath, tmp_iso)
+
+        self.endSignal.emit(tmp_iso)
+
+
 class ExtractDATABINThread(QtCore.QThread):
     endSignal = QtCore.pyqtSignal(str)
 
@@ -156,6 +171,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.iso_hash_thread = None
+        self.copy_iso_thread = None
         self.extract_databin_thread = None
         self.decrypt_databin_thread = None
         self.dump_thread = None
@@ -177,8 +193,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         config = utils.config
 
         # Cleanup
-        if utils.temp_folder.exists():
-            shutil.rmtree(utils.temp_folder)
+        # if utils.temp_folder.exists():
+        #     shutil.rmtree(utils.temp_folder)
 
         # Patcher Tab
         logTextBox = QTextEditLogger(self)
@@ -287,6 +303,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.extract_databin()
 
+    def copy_iso(self, iso_path):
+        logging.info("Copying ISO...")
+        self.copy_iso_thread = CopyISOThread(iso_path)
+        self.copy_iso_thread.start()
+
+        self.copy_iso_thread.endSignal.connect(self.copy_iso_finished)
+
+    def copy_iso_finished(self, tmp_iso):
+        self.copy_iso_thread.exit()
+
+        self.current_iso_path = tmp_iso
+        self.extract_databin()
+
     def extract_databin(self):
         logging.info("Extracting DATA.BIN...")
         self.extract_databin_thread = ExtractDATABINThread(self.current_iso_path)
@@ -344,7 +373,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process1 = None
 
         old_data_path = Path(utils.temp_folder, "DATA.BIN")
-        os.remove(old_data_path)
+        if self.keep_databin.isChecked():
+            ndatabin = Path(self.iso_path).parent.joinpath("DATA.BIN")
+            shutil.move(old_data_path, ndatabin)
+        else:
+            os.remove(old_data_path)
 
         self.patch_fuc()
 
@@ -376,6 +409,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.optional_list.setEnabled(True)
         self.patch_button.setText("Patch ISO")
 
+        # Cleanup
+        if utils.temp_folder.exists():
+            shutil.rmtree(utils.temp_folder)
+
     def patch_iso(self):
         self.patch_button.setEnabled(False)
         self.iso_button.setEnabled(False)
@@ -388,8 +425,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.iso_hash == utils.UMD_MD5HASH:
             self.patch_compat(iso_path)
         else:
-            self.current_iso_path = iso_path
-            self.extract_databin()
+            self.copy_iso(iso_path)
 
         # for itm in self.optional_patches:
         #     print(itm.filename, itm.checkbox.isChecked())
