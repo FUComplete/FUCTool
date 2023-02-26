@@ -122,6 +122,7 @@ class ExtractDATABINThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
+        utils.create_temp_folder()
         data_bin_path = utils.extract_data_bin(self.filepath)
         self.endSignal.emit(data_bin_path)
 
@@ -134,7 +135,7 @@ class DecryptDATABINThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
-        # TODO: create temp folder everywhere before using it
+        utils.create_temp_folder()
         data_dec_path = Path(utils.temp_folder, "DATA.BIN.DEC")
         utils.decrypt_data_bin(self.filepath, data_dec_path)
 
@@ -315,7 +316,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def patch_align(self, databin_path):
         exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "align.xdelta")
-        utils.create_temp_folder()
         ndata_path = Path(utils.temp_folder, "DATA.BIN")
 
         logging.info("Patching DATA.BIN...")
@@ -329,22 +329,70 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         data_dec_path = Path(utils.temp_folder, "DATA.BIN.DEC")
         os.remove(data_dec_path)
 
+        self.replace_databin()
+
+    def replace_databin(self):
+        exe_path = Path(utils.current_path, "bin", "UMD-replace.exe")
+        databin_path = Path(utils.temp_folder, "DATA.BIN")
+
+        logging.info("Replacing DATA.BIN...")
+        self.process1 = QtCore.QProcess()
+        self.process1.finished.connect(self.replace_databin_finished)
+        self.process1.start(str(exe_path), [str(self.current_iso_path), "/PSP_GAME/USRDIR/DATA.BIN", str(databin_path)])
+
+    def replace_databin_finished(self):
+        self.process1 = None
+
+        old_data_path = Path(utils.temp_folder, "DATA.BIN")
+        os.remove(old_data_path)
+
+        self.patch_fuc()
+
+    def patch_fuc(self):
+        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        patch_path = Path(utils.current_path, "res", "patches", "FUC_1.3.0_FINAL.xdelta")
+        iso_path = Path(self.iso_path.text())
+        niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
+
+        logging.info("Patching ISO...")
+        self.process2 = QtCore.QProcess()
+        self.process2.finished.connect(self.patch_fuc_finished)
+        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
+
+    def patch_fuc_finished(self):
+        self.process2 = None
+
+        iso_path = Path(self.iso_path.text())
+        niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
+        logging.info(f"Patching done, patched ISO is located at: {niso_path}")
+
+        niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+        if niso_path.exists():
+            os.remove(niso_path)
+
+        self.patch_button.setEnabled(True)
+        self.iso_button.setEnabled(True)
+        self.keep_databin.setEnabled(True)
+        self.optional_list.setEnabled(True)
+        self.patch_button.setText("Patch ISO")
+
     def patch_iso(self):
         self.patch_button.setEnabled(False)
+        self.iso_button.setEnabled(False)
+        self.keep_databin.setEnabled(False)
+        self.optional_list.setEnabled(False)
         self.patch_button.setText("Patching...")
 
         iso_path = Path(self.iso_path.text())
 
         if self.iso_hash == utils.UMD_MD5HASH:
             self.patch_compat(iso_path)
+        else:
+            self.current_iso_path = iso_path
+            self.extract_databin()
 
         # for itm in self.optional_patches:
         #     print(itm.filename, itm.checkbox.isChecked())
-
-        # patcher.LOGGER = logging.getLogger()
-        # patcher.replace_data_bin("", "")
-        self.patch_button.setEnabled(True)
-        self.patch_button.setText("Save")
 
     def select_config_bin(self):
         options = QtWidgets.QFileDialog.Options()
