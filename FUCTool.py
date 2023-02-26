@@ -126,6 +126,21 @@ class ExtractDATABINThread(QtCore.QThread):
         self.endSignal.emit(data_bin_path)
 
 
+class DecryptDATABINThread(QtCore.QThread):
+    endSignal = QtCore.pyqtSignal(str)
+
+    def __init__(self, filepath):
+        super().__init__()
+        self.filepath = filepath
+
+    def run(self):
+        # TODO: create temp folder everywhere before using it
+        data_dec_path = Path(utils.temp_folder, "DATA.BIN.DEC")
+        utils.decrypt_data_bin(self.filepath, data_dec_path)
+
+        self.endSignal.emit(str(data_dec_path))
+
+
 class QuestsReadThread(QtCore.QThread):
     endSignal = QtCore.pyqtSignal(str)
 
@@ -141,6 +156,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.iso_hash_thread = None
         self.extract_databin_thread = None
+        self.decrypt_databin_thread = None
         self.dump_thread = None
 
         self.process1 = None  # UMD-Replace.exe
@@ -278,8 +294,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.extract_databin_thread.endSignal.connect(self.extract_databin_finished)
 
     def extract_databin_finished(self, databin_path):
-        logging.info(str(databin_path))
         self.extract_databin_thread.exit()
+        self.decrypt_databin(databin_path)
+
+    def decrypt_databin(self, databin_path):
+        logging.info("Decrypting DATA.BIN (this may take a few minutes)...")
+        self.decrypt_databin_thread = DecryptDATABINThread(databin_path)
+        self.decrypt_databin_thread.start()
+
+        self.decrypt_databin_thread.endSignal.connect(self.decrypt_databin_finished)
+
+    def decrypt_databin_finished(self):
+        self.decrypt_databin_thread.exit()
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
