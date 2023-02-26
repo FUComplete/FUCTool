@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import hashlib
 import logging
 import os
 import shutil
@@ -103,6 +103,22 @@ class DumpDataBINThread(QtCore.QThread):
         self.endSignal.emit(str(outfolder.absolute()))
 
 
+class ISOHashThread(QtCore.QThread):
+    endSignal = QtCore.pyqtSignal(str)
+
+    def __init__(self, filepath):
+        super().__init__()
+        self.filepath = filepath
+
+    def run(self):
+        with open(self.filepath, "rb") as f:
+            file_hash = hashlib.md5()
+            while chunk := f.read(8192):
+                file_hash.update(chunk)
+
+        self.endSignal.emit(file_hash.hexdigest())
+
+
 class QuestsReadThread(QtCore.QThread):
     endSignal = QtCore.pyqtSignal(str)
 
@@ -116,11 +132,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+
+        self.iso_hash_thread = None
         self.dump_thread = None
 
         self.process1 = None  # UMD-Replace.exe
         self.process2 = None  # xdelta3.exe
         self.process3 = None  # psp-save.exe
+
+        self.iso_hash = None
 
         self.folder_quests = []
         self.save_quests = []
@@ -204,14 +224,57 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                             options=options)
         if fileName:
             self.iso_path.setText(fileName)
+            logging.info("Checking ISO...")
+
+            self.iso_hash_thread = ISOHashThread(fileName)
+            self.iso_hash_thread.start()
+
+            self.iso_hash_thread.endSignal.connect(self.iso_hash_finished)
+
+    def iso_hash_finished(self, iso_hash):
+        self.iso_hash = iso_hash
+        self.iso_hash_thread.exit()
+
+        if self.iso_hash in [utils.UMD_MD5HASH, utils.PSN_MD5HASH]:
+            logging.info("Valid ISO file.")
             self.optional_list.setEnabled(True)
             self.patch_button.setEnabled(True)
+        else:
+            logging.error(f"Invalid ISO, your dump should match one of the following md5 hashes:")
+            logging.error(f"UMD: {utils.UMD_MD5HASH}")
+            logging.error(f"PSN: {utils.UMD_MD5HASH}")
+
+    def patch_compat(self, iso_path):
+        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
+        utils.create_temp_folder()
+        niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+
+        logging.info("UMD ISO found, applying compat patch...")
+        self.process2 = QtCore.QProcess()
+        self.process2.finished.connect(self.compat_finished)
+        self.process2.error.connect(self.compat_error)
+        self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
+
+    def compat_finished(self):
+        logging.info("Compat patching done.")
+        self.process2 = None
+
+    def compat_error(self):
+        logging.info("Compat patching error.")
 
     def patch_iso(self):
-        print(self.iso_path.text())
+        iso_path = Path(self.iso_path.text())
 
-        for itm in self.optional_patches:
-            print(itm.filename, itm.checkbox.isChecked())
+        if self.iso_hash == utils.UMD_MD5HASH:
+            self.patch_compat(iso_path)
+
+        logging.info("Compat patching done?.")
+
+
+
+        # for itm in self.optional_patches:
+        #     print(itm.filename, itm.checkbox.isChecked())
 
         # patcher.LOGGER = logging.getLogger()
         # patcher.replace_data_bin("", "")
@@ -293,7 +356,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.dump_thread = DumpDataBINThread(fileName)
             self.dump_thread.start()
 
-            self.dump_thread.endSignal.connect(self.dump_end)
+            self.dump_thread.endSignal.connect(self.dump_finished)
             self.dump_thread.statusSignal.connect(self.dump_status)
 
     def dump_status(self, code):
@@ -305,7 +368,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if code == 1:
             self.dump_databin_button.setText("Renaming...")
 
-    def dump_end(self, filepath):
+    def dump_finished(self, filepath):
         self.dump_databin_button.setEnabled(True)
         self.dump_databin_button.setText("Dump DATA.BIN")
 
