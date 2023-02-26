@@ -469,7 +469,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Rescan folder</string>
+                <string notr="true">Rescan folder</string>
                </property>
               </widget>
              </item>
@@ -553,7 +553,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Remove</string>
+                <string notr="true">Remove</string>
                </property>
               </widget>
              </item>

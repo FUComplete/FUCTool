@@ -233,6 +233,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.quests_rescan.sizePolicy().hasHeightForWidth())
         self.quests_rescan.setSizePolicy(sizePolicy)
+        self.quests_rescan.setText("Rescan folder")
         self.quests_rescan.setObjectName("quests_rescan")
         self.horizontalLayout_8.addWidget(self.quests_rescan)
         self.verticalLayout_4.addLayout(self.horizontalLayout_8)
@@ -281,6 +282,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.quests_remove.sizePolicy().hasHeightForWidth())
         self.quests_remove.setSizePolicy(sizePolicy)
+        self.quests_remove.setText("Remove")
         self.quests_remove.setObjectName("quests_remove")
         self.horizontalLayout_9.addWidget(self.quests_remove)
         self.verticalLayout_6.addLayout(self.horizontalLayout_9)
@@ -336,5 +338,3 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.replace_list.setSortingEnabled(True)
-        self.quests_rescan.setText(_translate("MainWindow", "Rescan folder"))
-        self.quests_remove.setText(_translate("MainWindow", "Remove"))
