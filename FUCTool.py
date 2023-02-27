@@ -175,7 +175,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.save = None
         self.save_key = None
         self.save_region = None
-        # self.decpath = None
 
         self.config = utils.config
 
@@ -184,6 +183,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             shutil.rmtree(utils.temp_folder)
 
         # Patcher Tab
+        self.label_3.hide()
+        self.optional_list.hide()
+
         logTextBox = QTextEditLogger(self)
         logTextBox.setFormatter(logging.Formatter('%(levelname)s | %(message)s'))
         logging.getLogger().addHandler(logTextBox)
