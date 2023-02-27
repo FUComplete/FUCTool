@@ -685,7 +685,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         shutil.copy2(og_save, backup_save)
 
-        keypath = Path("res", self.save_key)
+        keypath = Path(utils.resources_path, "keys", self.save_key)
         exe_path = Path(utils.resources_path, "bin", "SED-PC.exe")
 
         self.process3 = QtCore.QProcess()

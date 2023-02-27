@@ -8,7 +8,7 @@ a = Analysis(
     ['FUCTool.py'],
     pathex=[],
     binaries=[("bin/UMD-replace.exe", "bin"), ("bin/xdelta3.exe", "bin"), ("bin/SED-PC.exe", "bin")],
-    datas=[],
+    datas=[("res/FU.bin", "keys"), ("res/P2G.bin", "keys")],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
