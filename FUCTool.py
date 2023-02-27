@@ -250,6 +250,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if mode == 1:
             QtWidgets.QMessageBox.critical(self, title, text)
 
+    def log_stderr(self, data):
+        stderr = bytes(data).decode("utf8")
+        logging.error(stderr)
+
+    def process1_stderr(self):
+        data = self.process1.readAllStandardError()
+        self.log_stderr(data)
+
+    def process2_stderr(self):
+        data = self.process2.readAllStandardError()
+        self.log_stderr(data)
+
+    def process3_stderr(self):
+        data = self.process3.readAllStandardError()
+        self.log_stderr(data)
+
     def select_iso(self):
         options = QtWidgets.QFileDialog.Options()
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select MHFU ISO file", "", "ISO Files (*.iso)",
@@ -285,6 +301,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         logging.info("UMD ISO found, applying compat patch...")
         self.process2 = QtCore.QProcess()
+        self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_compat_finished)
         self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
 
@@ -340,6 +357,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         logging.info("Patching DATA.BIN...")
         self.process2 = QtCore.QProcess()
+        self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_align_finished)
         self.process2.start(str(exe_path), ["-d", "-s", str(databin_path), str(patch_path), str(ndata_path)])
 
@@ -357,6 +375,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         logging.info("Replacing DATA.BIN...")
         self.process1 = QtCore.QProcess()
+        self.process1.readyReadStandardError.connect(self.process1_stderr)
         self.process1.finished.connect(self.replace_databin_finished)
         self.process1.start(str(exe_path), [str(self.current_iso_path), "/PSP_GAME/USRDIR/DATA.BIN", str(databin_path)])
 
@@ -381,6 +400,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         logging.info("Patching ISO...")
         self.process2 = QtCore.QProcess()
+        self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_fuc_finished)
         self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
@@ -664,6 +684,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.quests_save_button.setText("Encrypting...")
 
         self.process3 = QtCore.QProcess()
+        self.process3.readyReadStandardError.connect(self.process3_stderr)
         self.process3.finished.connect(self.encrypt_finished)
         self.process3.start(str(exe_path), ["-e", str(keypath), "5", str(encpath), str(param_in), str(param_out)])
 
