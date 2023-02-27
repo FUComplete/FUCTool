@@ -201,14 +201,14 @@ def dump_data_bin(data_bin, outfolder):
     mhff.psp.data.extract(data_bin, outfolder)
 
 
-def decrypt_save(filepath, mode):
+def decrypt_save(filepath, region):
     game = None
 
-    if mode == 1:
+    if region == 1:
         game = mhef.psp.MHP2G_EU
-    if mode == 2:
+    if region == 2:
         game = mhef.psp.MHP2G_NA
-    if mode == 3:
+    if region == 3:
         game = mhef.psp.MHP2G_JP
 
     sfile = read_file_bytes(filepath)
@@ -220,6 +220,22 @@ def decrypt_save(filepath, mode):
     dec = sc.decrypt(sfile)
 
     return dec
+
+
+def encrypt_save(save, region):
+    game = None
+
+    if region == 1:
+        game = mhef.psp.MHP2G_EU
+    if region == 2:
+        game = mhef.psp.MHP2G_NA
+    if region == 3:
+        game = mhef.psp.MHP2G_JP
+
+    sc = mhef.psp.SavedataCipher(game)
+    enc = sc.encrypt(save)
+
+    return enc
 
 
 def get_quest_data(qfile):

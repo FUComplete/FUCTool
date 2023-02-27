@@ -156,6 +156,7 @@ class DecryptDATABINThread(QtCore.QThread):
 
         self.endSignal.emit(str(data_dec_path))
 
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -179,6 +180,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.save = None
         self.save_key = None
+        self.save_region = None
         # self.decpath = None
 
         config = utils.config
@@ -579,16 +581,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.quests_save_button.setEnabled(True)
 
     def read_save(self, path):
-        mode = None
         if "ULES01213" in path.parent.name:
             self.save_key = "FU.bin"
-            mode = 1
+            self.save_region = 1
         if "ULUS10391" in path.parent.name:
             self.save_key = "FU.bin"
-            mode = 2
+            self.save_region = 2
         if "ULJM05500" in path.parent.name:
             self.save_key = "P2G.bin"
-            mode = 3
+            self.save_region = 3
 
         param = Path(path.parent, "PARAM.SFO")
         if (self.save_key is None) or (not path.exists()) or (not param.exists()):
@@ -596,10 +597,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 mode=1, title="Error")
             return
 
-        shutil.copy2(path,
-                     Path(path.parent, path.stem + ".BIN.BAK"))  # TODO: do this when saving, backup save just in case
-
-        dec = utils.decrypt_save(path, mode)
+        dec = utils.decrypt_save(path, self.save_region)
         self.save = bytearray(dec)
         self.save_quests = utils.get_quests_in_save(dec)
         self.scan_quests_save()
@@ -607,7 +605,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def copy_to_save(self):
         selection = self.quests_folder_table.selectionModel().selectedRows()
 
-        # TODO: Check if it's an arena quest and not add it (and show a dialog)
         if len(self.save_quests) + len(selection) > 18:
             self.generic_dialog("Not enough slots to add selected quests to save.", mode=1, title="Error")
         else:
@@ -662,36 +659,57 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scan_quests_save()
 
     def encrypt_and_save(self):
+        self.quests_save_button.setText("Encrypting...")
+        self.quests_save_button.setEnabled(False)
+
         empty = 18 - len(self.save_quests)
         empty_quests = [{"bytes": bytearray(), "qid": "", "name": ""} for _ in range(empty)]
 
         nquests = self.save_quests + empty_quests
         nsave = utils.add_quests_to_save(self.save, nquests)
+        nsave = utils.encrypt_save(nsave, self.save_region)
 
         utils.create_temp_folder()
-        encpath = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
+        og_save = Path(self.save_path.text(), "MHP2NDG.BIN")
+        tmp_save = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
+        final_save = Path(utils.temp_folder, "MHP2NDG.BIN")
+        backup_save = Path(og_save.parent, "MHP2NDG.BIN.BAK")
 
-        with open(encpath, "wb") as f:
+        param_in = Path(og_save.parent, "PARAM.SFO")
+        param_out = Path(utils.temp_folder, "PARAM.SFO")
+
+        with open(tmp_save, "wb") as f:
             f.write(nsave)
+
+        shutil.copy2(og_save, backup_save)
 
         keypath = Path("res", self.save_key)
         exe_path = Path(utils.current_path, "bin", "psp-save-w32.exe")
 
-        param_in = Path(self.save_path.text(), "PARAM.SFO")
-        param_out = Path(utils.temp_folder, "PARAM.SFO.TEMP")
-
-        self.quests_save_button.setEnabled(False)
-        self.quests_save_button.setText("Encrypting...")
-
         self.process3 = QtCore.QProcess()
         self.process3.readyReadStandardError.connect(self.process3_stderr)
         self.process3.finished.connect(self.encrypt_finished)
-        self.process3.start(str(exe_path), ["-e", str(keypath), "5", str(encpath), str(param_in), str(param_out)])
+        self.process3.start(str(exe_path), ["-e", str(keypath), "5", str(tmp_save),
+                                            str(final_save), "MHP2NDG.BIN", str(param_in),
+                                            str(param_out)])
 
     def encrypt_finished(self):
         self.process3 = None
 
-        # TODO: put a dialog here
+        og_save = Path(self.save_path.text(), "MHP2NDG.BIN")
+        tmp_save = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
+        final_save = Path(utils.temp_folder, "MHP2NDG.BIN")
+
+        param_in = Path(og_save.parent, "PARAM.SFO")
+        param_out = Path(utils.temp_folder, "PARAM.SFO")
+
+        shutil.copy2(final_save, og_save)
+        shutil.copy2(param_out, param_in)
+
+        os.remove(tmp_save)
+        os.remove(param_out)
+
+        self.generic_dialog(f"Save changed succesfully.")
         self.quests_save_button.setText("Save")
         self.quests_save_button.setEnabled(True)
 
