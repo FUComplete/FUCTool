@@ -36,7 +36,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="patch_tab">
      <attribute name="title">
@@ -650,14 +650,22 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_9">
+        <widget class="QLabel" name="about_title">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string notr="true">&lt;b&gt;FUComplete Tool&lt;/b&gt;</string>
+          <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FUComplete Tool&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
@@ -665,6 +673,75 @@
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/FUComplete/FUCTool/issues/new&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Report issues&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/FUComplete/FUCTool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Repository&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tool to install and manage various settings and options of the &lt;a href=&quot;https://github.com/FUComplete&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;FUComplete&lt;/span&gt;&lt;/a&gt; patch.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="title">
+          <string>Libraries/tools used:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">&lt;html&gt;
+&lt;head /&gt;
+&lt;body&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://gitlab.com/svanheulen/mhff&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;mhff&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;mhef (&lt;a href=&quot;https://gitlab.com/svanheulen/mhef&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;original&lt;/a&gt;, &lt;a href=&quot;https://github.com/IncognitoMan/mhef&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;fork&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/jmacd/xdelta&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;xdelta3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.romhacking.net/utilities/891/&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;UMD-Replace&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/BrianBTB/SED-PC&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;SED-PC&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/scott-griffiths/bitstring&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;bitstring&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/clalancette/pycdlib&quot; style=&quot;text-decoration: underline; color:#2980b9;&quot;&gt;pycdlib&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;  
+&lt;/body&gt;
+&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>

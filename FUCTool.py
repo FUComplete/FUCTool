@@ -52,6 +52,7 @@ class ConfigWidget(QtWidgets.QWidget):
         self.options = options
 
         label = QtWidgets.QLabel(desc)
+        label.setOpenExternalLinks(True)
         self.combobox = QtWidgets.QComboBox()
 
         for op in self.options["values"]:
@@ -168,6 +169,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle(f"FUComplete Tool [{utils.VERSION}]")
 
         self.iso_hash_thread = None
         self.copy_iso_thread = None
@@ -255,6 +257,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.quests_left.clicked.connect(self.copy_from_save)
         self.quests_remove.clicked.connect(self.remove_from_save)
         self.quests_save_button.clicked.connect(self.encrypt_and_save)
+
+        # About tab
+        self.about_title.setText(f"FUComplete Tool {utils.VERSION}")
 
     def generic_dialog(self, text, title="Info", mode=0):
         if mode == 0:

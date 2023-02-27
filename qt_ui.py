@@ -317,24 +317,76 @@ class Ui_MainWindow(object):
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_8)
         self.verticalLayout_7.setContentsMargins(4, 4, 4, 4)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.label_9 = QtWidgets.QLabel(self.verticalLayoutWidget_8)
+        self.about_title = QtWidgets.QLabel(self.verticalLayoutWidget_8)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.about_title.sizePolicy().hasHeightForWidth())
+        self.about_title.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.label_9.setFont(font)
-        self.label_9.setText("<b>FUComplete Tool</b>")
-        self.label_9.setTextFormat(QtCore.Qt.RichText)
-        self.label_9.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_9.setObjectName("label_9")
-        self.verticalLayout_7.addWidget(self.label_9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.about_title.setFont(font)
+        self.about_title.setText("<html><head/><body><p>FUComplete Tool</p></body></html>")
+        self.about_title.setTextFormat(QtCore.Qt.RichText)
+        self.about_title.setAlignment(QtCore.Qt.AlignCenter)
+        self.about_title.setObjectName("about_title")
+        self.verticalLayout_7.addWidget(self.about_title)
+        self.label_8 = QtWidgets.QLabel(self.verticalLayoutWidget_8)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.label_8.setFont(font)
+        self.label_8.setText("<html><head/><body><p align=\"center\"><a href=\"https://github.com/FUComplete/FUCTool/issues/new\"><span style=\" text-decoration: underline; color:#2980b9;\">Report issues</span></a> | <a href=\"https://github.com/FUComplete/FUCTool\"><span style=\" text-decoration: underline; color:#2980b9;\">Repository</span></a><br/></p><p>Tool to install and manage various settings and options of the <a href=\"https://github.com/FUComplete\"><span style=\" text-decoration: underline; color:#2980b9;\">FUComplete</span></a> patch.</p><p><br/></p></body></html>")
+        self.label_8.setOpenExternalLinks(True)
+        self.label_8.setObjectName("label_8")
+        self.verticalLayout_7.addWidget(self.label_8)
+        self.groupBox = QtWidgets.QGroupBox(self.verticalLayoutWidget_8)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.groupBox.setFont(font)
+        self.groupBox.setAlignment(QtCore.Qt.AlignCenter)
+        self.groupBox.setObjectName("groupBox")
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.groupBox)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.label_7 = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.label_7.setFont(font)
+        self.label_7.setText("<html>\n"
+"<head />\n"
+"<body>\n"
+"<ul>\n"
+"<li><a href=\"https://gitlab.com/svanheulen/mhff\" style=\"text-decoration: underline; color:#2980b9;\">mhff</a></li>\n"
+"<li>mhef (<a href=\"https://gitlab.com/svanheulen/mhef\" style=\"text-decoration: underline; color:#2980b9;\">original</a>, <a href=\"https://github.com/IncognitoMan/mhef\" style=\"text-decoration: underline; color:#2980b9;\">fork</a>)</li>\n"
+"<li><a href=\"https://github.com/jmacd/xdelta\" style=\"text-decoration: underline; color:#2980b9;\">xdelta3</a></li>\n"
+"<li><a href=\"https://www.romhacking.net/utilities/891/\" style=\"text-decoration: underline; color:#2980b9;\">UMD-Replace</a></li>\n"
+"<li><a href=\"https://github.com/BrianBTB/SED-PC\" style=\"text-decoration: underline; color:#2980b9;\">SED-PC</a></li>\n"
+"<li><a href=\"https://github.com/scott-griffiths/bitstring\" style=\"text-decoration: underline; color:#2980b9;\">bitstring</a></li>\n"
+"<li><a href=\"https://github.com/clalancette/pycdlib\" style=\"text-decoration: underline; color:#2980b9;\">pycdlib</a></li>\n"
+"</ul>  \n"
+"</body>\n"
+"</html>")
+        self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label_7.setOpenExternalLinks(True)
+        self.label_7.setObjectName("label_7")
+        self.verticalLayout_5.addWidget(self.label_7)
+        self.verticalLayout_7.addWidget(self.groupBox)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem1)
         self.tabWidget.addTab(self.about_tab, "About")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.replace_list.setSortingEnabled(True)
+        self.groupBox.setTitle(_translate("MainWindow", "Libraries/tools used:"))
