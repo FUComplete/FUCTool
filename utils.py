@@ -244,7 +244,8 @@ def get_quests_in_folder():
             qfile = read_file_bytes(q)
 
         qid, name = get_quest_data(qfile)
-        res.append({"bytes": qfile, "qid": qid, "name": name})
+        if not qid.startswith("61"):  # Ignore arena/challenge quests
+            res.append({"bytes": qfile, "qid": qid, "name": name})
 
     res = sorted(res, key=lambda d: d['qid'])
     return res
