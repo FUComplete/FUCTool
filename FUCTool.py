@@ -36,8 +36,6 @@ class OptionalWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(label)
         self.checkbox = QtWidgets.QCheckBox()
 
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        # self.checkbox.setSizePolicy(sizePolicy)
         label.setWordWrap(True)
 
         layout = QtWidgets.QHBoxLayout()
@@ -79,10 +77,6 @@ class DumpDataBINThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
-        # bin_dec = Path(self.filepath).stem + ".BIN.DEC"
-        # utils.decrypt_data_bin(self.filepath, bin_dec)
-        # self.statusSignal.emit(1)
-
         outfolder = Path(self.filepath).parent.joinpath("DATA.BIN_dump")
 
         # Check if folder exists already, can cause issues later
