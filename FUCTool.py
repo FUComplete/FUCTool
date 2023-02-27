@@ -151,6 +151,19 @@ class DecryptDATABINThread(QtCore.QThread):
         self.endSignal.emit(str(data_dec_path))
 
 
+class DecryptSaveThread(QtCore.QThread):
+    endSignal = QtCore.pyqtSignal(bytes)
+
+    def __init__(self, filepath, save_region):
+        super().__init__()
+        self.filepath = filepath
+        self.save_region = save_region
+
+    def run(self):
+        dec = utils.decrypt_save(self.filepath, self.save_region)
+        self.endSignal.emit(dec)
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -161,6 +174,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.extract_databin_thread = None
         self.decrypt_databin_thread = None
         self.dump_thread = None
+        self.decrypt_save_thread = None
 
         self.process1 = None  # UMD-Replace.exe
         self.process2 = None  # xdelta3.exe
@@ -609,10 +623,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 mode=1, title="Error")
             return
 
-        dec = utils.decrypt_save(path, self.save_region)
+        self.save_folder_button.setEnabled(False)
+        self.save_folder_button.setText("Decrypting...")
+        self.decrypt_save_thread = DecryptSaveThread(path, self.save_region)
+        self.decrypt_save_thread.start()
+
+        self.decrypt_save_thread.endSignal.connect(self.decrypt_save_finished)
+
+    def decrypt_save_finished(self, dec):
         self.save = bytearray(dec)
         self.save_quests = utils.get_quests_in_save(dec)
         self.scan_quests_save()
+
+        self.save_folder_button.setEnabled(True)
+        self.save_folder_button.setText("Select")
 
     def copy_to_save(self):
         selection = self.quests_folder_table.selectionModel().selectedRows()
