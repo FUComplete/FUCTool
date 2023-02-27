@@ -126,7 +126,7 @@ class CopyISOThread(QtCore.QThread):
         tmp_iso = Path(utils.temp_folder, self.filepath.name)
         shutil.copy2(self.filepath, tmp_iso)
 
-        self.endSignal.emit(tmp_iso)
+        self.endSignal.emit(str(tmp_iso))
 
 
 class ExtractDATABINThread(QtCore.QThread):
@@ -193,8 +193,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         config = utils.config
 
         # Cleanup
-        # if utils.temp_folder.exists():
-        #     shutil.rmtree(utils.temp_folder)
+        if utils.temp_folder.exists():
+            shutil.rmtree(utils.temp_folder)
 
         # Patcher Tab
         logTextBox = QTextEditLogger(self)
@@ -374,8 +374,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         old_data_path = Path(utils.temp_folder, "DATA.BIN")
         if self.keep_databin.isChecked():
-            ndatabin = Path(self.iso_path).parent.joinpath("DATA.BIN")
+            ndatabin = Path(self.iso_path.text()).parent.joinpath("DATA.BIN")
             shutil.move(old_data_path, ndatabin)
+            logging.info(f"DATA.BIN moved to: {ndatabin}")
         else:
             os.remove(old_data_path)
 
