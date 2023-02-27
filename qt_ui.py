@@ -18,6 +18,9 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QtCore.QSize(634, 590))
         MainWindow.setMaximumSize(QtCore.QSize(640, 590))
         MainWindow.setWindowTitle("FUComplete Tool")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icon/icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -390,3 +393,4 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.replace_list.setSortingEnabled(True)
         self.groupBox.setTitle(_translate("MainWindow", "Libraries/tools used:"))
+import resources_rc

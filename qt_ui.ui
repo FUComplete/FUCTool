@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string notr="true">FUComplete Tool</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icon/icon.ico</normaloff>:/icon/icon.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -766,6 +770,8 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
