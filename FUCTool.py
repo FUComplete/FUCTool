@@ -156,15 +156,6 @@ class DecryptDATABINThread(QtCore.QThread):
 
         self.endSignal.emit(str(data_dec_path))
 
-
-class QuestsReadThread(QtCore.QThread):
-    endSignal = QtCore.pyqtSignal(str)
-
-    def __init__(self, folderpath):
-        super().__init__()
-        self.folderpath = folderpath
-
-
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -559,7 +550,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             savepath = Path(folderName).joinpath("MHP2NDG.BIN")
             self.save_path.setText(folderName)
 
-            # TODO: move to QuestsReadThread
             self.read_save(savepath)
 
             self.quests_right.setEnabled(True)

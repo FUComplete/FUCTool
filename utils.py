@@ -141,21 +141,6 @@ def read_replace_folder(infolder):
     return existing_files
 
 
-def get_filebin_data(filename):
-    filebin = read_file_bytes(filename)
-
-    files = []
-    for i, byte in enumerate(filebin):
-        if byte != 0x00:
-            barray = bitstring.BitArray(uint=byte, length=8)
-
-            for j, bit in enumerate(barray[::-1]):
-                if bit:
-                    files.append(i * 8 + j)
-
-    return files
-
-
 def generate_filebin(infolder, outfolder):
     infiles = get_all_files(infolder)
 
