@@ -295,7 +295,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"PSN: {utils.UMD_MD5HASH}")
 
     def patch_compat(self, iso_path):
-        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
         utils.create_temp_folder()
         niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
@@ -353,7 +353,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_align(databin_path)
 
     def patch_align(self, databin_path):
-        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "align.xdelta")
         ndata_path = Path(utils.temp_folder, "DATA.BIN")
 
@@ -372,7 +372,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.replace_databin()
 
     def replace_databin(self):
-        exe_path = Path(utils.current_path, "bin", "UMD-replace.exe")
+        exe_path = Path(utils.resources_path, "bin", "UMD-replace.exe")
         databin_path = Path(utils.temp_folder, "DATA.BIN")
 
         logging.info("Replacing DATA.BIN...")
@@ -395,7 +395,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_fuc()
 
     def patch_fuc(self):
-        exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
+        exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         iso_path = Path(self.iso_path.text())
         niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
@@ -686,7 +686,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         shutil.copy2(og_save, backup_save)
 
         keypath = Path("res", self.save_key)
-        exe_path = Path(utils.current_path, "bin", "SED-PC.exe")
+        exe_path = Path(utils.resources_path, "bin", "SED-PC.exe")
 
         self.process3 = QtCore.QProcess()
         self.process3.readyReadStandardError.connect(self.process3_stderr)

@@ -19,7 +19,7 @@ import mhff.psp.data
 
 UMD_MD5HASH = "1f76ee9ccbd6d39158f06e6e5354a5bd"
 PSN_MD5HASH = "cc39d070b2d2c44c9ac8187e00b75dc4"
-PATCHED_MD5HASH = "1890386601adf7d1d3d69067e8917c83"  # TODO: Cambiar con la version final
+PATCHED_MD5HASH = "1890386601adf7d1d3d69067e8917c83"  # TODO: Move to config.json
 
 QUESTS_START = 0x142300
 QUESTS_END = 0x169360
@@ -372,5 +372,5 @@ def get_filelist(filename):
 config = get_config_json("res/config.json")
 filelist = get_filelist("res/filelist_2g.csv")
 current_path = Path(sys.executable).parent.resolve()
-# current_path = Path(__file__).resolve().parent
+resources_path = Path(__file__).resolve().parent
 temp_folder = Path(current_path, "res", "temp")
