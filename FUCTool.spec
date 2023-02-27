@@ -7,7 +7,7 @@ block_cipher = None
 a = Analysis(
     ['FUCTool.py'],
     pathex=[],
-    binaries=[],
+    binaries=[("bin/UMD-replace.exe", "bin"), ("bin/xdelta3.exe", "bin"), ("bin/SED-PC.exe", "bin")],
     datas=[],
     hiddenimports=[],
     hookspath=[],
