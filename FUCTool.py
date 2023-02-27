@@ -170,7 +170,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.process1 = None  # UMD-Replace.exe
         self.process2 = None  # xdelta3.exe
-        self.process3 = None  # psp-save.exe
+        self.process3 = None  # SED-PC.exe
 
         self.iso_hash = None
         self.current_iso_path = None
@@ -396,7 +396,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def patch_fuc(self):
         exe_path = Path(utils.current_path, "bin", "xdelta3.exe")
-        patch_path = Path(utils.current_path, "res", "patches", "FUC_1.3.0_FINAL.xdelta")
+        patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         iso_path = Path(self.iso_path.text())
         niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
 
@@ -676,11 +676,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         utils.create_temp_folder()
         og_save = Path(self.save_path.text(), "MHP2NDG.BIN")
         tmp_save = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
-        final_save = Path(utils.temp_folder, "MHP2NDG.BIN")
         backup_save = Path(og_save.parent, "MHP2NDG.BIN.BAK")
 
         param_in = Path(og_save.parent, "PARAM.SFO")
-        param_out = Path(utils.temp_folder, "PARAM.SFO")
 
         with open(tmp_save, "wb") as f:
             f.write(nsave)
@@ -688,30 +686,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         shutil.copy2(og_save, backup_save)
 
         keypath = Path("res", self.save_key)
-        exe_path = Path(utils.current_path, "bin", "psp-save-w32.exe")
+        exe_path = Path(utils.current_path, "bin", "SED-PC.exe")
 
         self.process3 = QtCore.QProcess()
         self.process3.readyReadStandardError.connect(self.process3_stderr)
         self.process3.finished.connect(self.encrypt_finished)
-        self.process3.start(str(exe_path), ["-e", str(keypath), "5", str(tmp_save),
-                                            str(final_save), "MHP2NDG.BIN", str(param_in),
-                                            str(param_out)])
+        self.process3.start(str(exe_path), ["-e", str(tmp_save), str(param_in), str(og_save), str(keypath)])
 
     def encrypt_finished(self):
         self.process3 = None
 
-        og_save = Path(self.save_path.text(), "MHP2NDG.BIN")
         tmp_save = Path(utils.temp_folder, "MHP2NDG.BIN.TEMP")
-        final_save = Path(utils.temp_folder, "MHP2NDG.BIN")
-
-        param_in = Path(og_save.parent, "PARAM.SFO")
-        param_out = Path(utils.temp_folder, "PARAM.SFO")
-
-        shutil.copy2(final_save, og_save)
-        shutil.copy2(param_out, param_in)
-
         os.remove(tmp_save)
-        os.remove(param_out)
 
         self.generic_dialog(f"Save changed succesfully.")
         self.quests_save_button.setText("Save")
