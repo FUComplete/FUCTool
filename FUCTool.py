@@ -183,7 +183,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.save_region = None
         # self.decpath = None
 
-        config = utils.config
+        self.config = utils.config
 
         # Cleanup
         if utils.temp_folder.exists():
@@ -197,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patcher_verticalLayout.insertWidget(4, logTextBox.widget)
 
         self.optional_patches = []
-        for itm in config["optional"]:
+        for itm in self.config["optional"]:
             item = QtWidgets.QListWidgetItem(self.optional_list)
             item_widget = OptionalWidget(itm["label"], itm["file"])
             item.setSizeHint(item_widget.sizeHint())
@@ -210,7 +210,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Config Tab
         self.config_options = []
-        for itm in config["config.bin"]:
+        for itm in self.config["config.bin"]:
             item = QtWidgets.QListWidgetItem(self.config_list)
             item_widget = ConfigWidget(itm["description"], itm["options"])
             item.setSizeHint(item_widget.sizeHint())
@@ -411,21 +411,37 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         iso_path = Path(self.iso_path.text())
         niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
-        logging.info(f"Patching done, patched ISO is located at: {niso_path}")
 
-        niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
-        if niso_path.exists():
-            os.remove(niso_path)
+        compat_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+        if compat_path.exists():
+            os.remove(compat_path)
+
+        # Cleanup
+        if utils.temp_folder.exists():
+            shutil.rmtree(utils.temp_folder)
+
+        logging.info("Checking patched ISO...")
+        self.iso_hash_thread = ISOHashThread(niso_path)
+        self.iso_hash_thread.start()
+
+        self.iso_hash_thread.endSignal.connect(self.iso_hash_finished2)
+
+    def iso_hash_finished2(self, iso_hash):
+        self.iso_hash = iso_hash
+        self.iso_hash_thread.exit()
+
+        if self.iso_hash == self.config["iso_checksum"]:
+            iso_path = Path(self.iso_path.text())
+            niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
+            logging.info(f"Patching done, patched ISO is located at: {niso_path}")
+        else:
+            logging.error(f"Patched ISO doesn't match the checksum, try again.")
 
         self.patch_button.setEnabled(True)
         self.iso_button.setEnabled(True)
         self.keep_databin.setEnabled(True)
         self.optional_list.setEnabled(True)
         self.patch_button.setText("Patch ISO")
-
-        # Cleanup
-        if utils.temp_folder.exists():
-            shutil.rmtree(utils.temp_folder)
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
