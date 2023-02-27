@@ -623,7 +623,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.folder_quests.append(qfile)
 
             fname = "m" + qfile["qid"] + ".mib.dec"
-            fpath = Path(utils.current_path, "quests", fname)
+            qfolder = Path(utils.current_path, "quests")
+            fpath = Path(qfolder, fname)
+
+            if not qfolder.exists():
+                os.makedirs(qfolder)
 
             if fpath.exists():
                 dlg = QtWidgets.QMessageBox()
