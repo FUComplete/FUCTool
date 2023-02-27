@@ -277,7 +277,7 @@ def get_quests_in_save(save_file):
         if current - i > 0:  # Check for empty slots
             dec = decrypt_quest(save_file[i:current])
 
-            if dec is not None:
+            if len(dec) > 0:
                 qid, name = get_quest_data(dec)
                 res.append({"bytes": bytearray(dec), "qid": qid, "name": name})
 
@@ -314,7 +314,7 @@ def decrypt_quest(quest):
     except ValueError:
         pass
 
-    return None
+    return bytes()
 
 
 def add_quests_to_save(save, quests):
