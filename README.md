@@ -3,7 +3,7 @@ Tool to install and manage various settings and options of the FUComplete patch.
 
 
 ## Build
-Use the .spec file to build the executable with pyinstaller, external executables should be in the `bin` folder, requires the following libraries:
+Use the .spec file to build the executable with pyinstaller, external executables (SED-PC, UMD-replace, xdelta3) should be in the `bin` folder, requires the following libraries:
 
 - mhff
 - mhef
