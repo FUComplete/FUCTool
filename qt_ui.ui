@@ -457,7 +457,7 @@
              <item>
               <widget class="QLabel" name="folder_count">
                <property name="text">
-                <string notr="true">Quests in folder (0):</string>
+                <string notr="true">Decrypted quests in folder (0):</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>

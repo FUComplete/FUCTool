@@ -577,7 +577,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         qsize = len(self.folder_quests)
 
         self.quests_folder_table.setRowCount(qsize)
-        self.folder_count.setText(f"Quests in folder ({qsize}):")
+        self.folder_count.setText(f"Decrypted quests in folder ({qsize}):")
 
         for i, q in enumerate(self.folder_quests):
             qid = QtWidgets.QTableWidgetItem(q["qid"])

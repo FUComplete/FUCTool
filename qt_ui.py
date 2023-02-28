@@ -226,7 +226,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.folder_count = QtWidgets.QLabel(self.verticalLayoutWidget_4)
-        self.folder_count.setText("Quests in folder (0):")
+        self.folder_count.setText("Decrypted quests in folder (0):")
         self.folder_count.setAlignment(QtCore.Qt.AlignCenter)
         self.folder_count.setObjectName("folder_count")
         self.horizontalLayout_8.addWidget(self.folder_count)

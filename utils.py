@@ -240,6 +240,10 @@ def encrypt_save(save, region):
 
 
 def get_quest_data(qfile):
+    # Check if it's encrypted
+    if qfile[0x00:0x08] != bytearray(b"\x4C\x00\x00\x00\x32\x4E\x44\x47"):
+        return None, None
+
     current = 0x80
     while qfile[current] != 0x00:
         current += 1
@@ -251,7 +255,7 @@ def get_quest_data(qfile):
 
 
 def get_quests_in_folder():
-    quests = glob.glob("quests/*.mib.dec")+glob.glob("quests/*.pat")
+    quests = glob.glob("quests/*.mib*")+glob.glob("quests/*.pat")
 
     res = []
     for q in quests:
@@ -261,8 +265,9 @@ def get_quests_in_folder():
             qfile = read_file_bytes(q)
 
         qid, name = get_quest_data(qfile)
-        if not qid.startswith("61"):  # Ignore arena/challenge quests
-            res.append({"bytes": qfile, "qid": qid, "name": name})
+        if qid is not None:  # Ignore encrypted quests
+            if not qid.startswith("61"):  # Ignore arena/challenge quests
+                res.append({"bytes": qfile, "qid": qid, "name": name})
 
     res = sorted(res, key=lambda d: d['qid'])
     return res
