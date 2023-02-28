@@ -1,5 +1,15 @@
 # FUCTool
-Tool to manage FUComplete settings and other stuff. Use the .spec file to compile the executable with pyinstaller.
+Tool to install and manage various settings and options of the FUComplete patch.
+
+
+## Build
+Use the .spec file to build the executable with pyinstaller, external executables should be in the `bin` folder, requires the following libraries:
+
+- mhff
+- mhef
+- pyqt5
+- bitstring
+- pycdlib
 
 ---
 
