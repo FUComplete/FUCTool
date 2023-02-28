@@ -708,7 +708,7 @@
           </font>
          </property>
          <property name="title">
-          <string>Libraries/tools used:</string>
+          <string notr="true">Libraries/tools used:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

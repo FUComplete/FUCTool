@@ -307,7 +307,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             logging.error(f"Invalid ISO, your dump should match one of the following md5 hashes:")
             logging.error(f"UMD: {utils.UMD_MD5HASH}")
-            logging.error(f"PSN: {utils.UMD_MD5HASH}")
+            logging.error(f"PSN: {utils.PSN_MD5HASH}")
 
     def patch_compat(self, iso_path):
         exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")

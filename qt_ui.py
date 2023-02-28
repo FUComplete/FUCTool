@@ -353,6 +353,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(11)
         self.groupBox.setFont(font)
+        self.groupBox.setTitle("Libraries/tools used:")
         self.groupBox.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.groupBox)
@@ -392,5 +393,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.replace_list.setSortingEnabled(True)
-        self.groupBox.setTitle(_translate("MainWindow", "Libraries/tools used:"))
 import resources_rc
