@@ -105,6 +105,7 @@ class Ui_MainWindow(object):
         self.config_list.setFocusPolicy(QtCore.Qt.NoFocus)
         self.config_list.setStyleSheet("QListWidget::item { border-bottom: 1px solid lightgray; }")
         self.config_list.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.config_list.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.config_list.setObjectName("config_list")
         self.config_verticalLayout.addWidget(self.config_list)
         self.config_button = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
@@ -245,6 +246,7 @@ class Ui_MainWindow(object):
         self.quests_folder_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.quests_folder_table.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.quests_folder_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.quests_folder_table.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.quests_folder_table.setObjectName("quests_folder_table")
         self.quests_folder_table.setColumnCount(2)
         self.quests_folder_table.setRowCount(0)
@@ -294,6 +296,7 @@ class Ui_MainWindow(object):
         self.quests_save_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.quests_save_table.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.quests_save_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.quests_save_table.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.quests_save_table.setRowCount(18)
         self.quests_save_table.setObjectName("quests_save_table")
         self.quests_save_table.setColumnCount(2)
@@ -387,7 +390,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

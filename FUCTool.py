@@ -230,6 +230,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.config_list.setItemWidget(item, item_widget)
             self.config_options.append(item_widget)
 
+        self.config_list.verticalScrollBar().setSingleStep(10)
+
         self.config_button.clicked.connect(self.save_config)
         self.config_bin_button.clicked.connect(self.select_config_bin)
 
