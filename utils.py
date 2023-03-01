@@ -39,13 +39,6 @@ def write_file_bytes(filepath, barray):
         f.write(barray)
 
 
-def int_to_bytes(x):
-    if x == 0:
-        return b'\x00'
-    else:
-        return x.to_bytes((x.bit_length() + 7) // 8, 'little')
-
-
 def create_temp_folder():
     if not temp_folder.exists():
         os.makedirs(temp_folder)
@@ -100,7 +93,8 @@ def read_configs(config_path):
         offset = int(itm["options"]["offset"], 16)
         jvalues = [bytes.fromhex(i["data"][2:]) for i in itm["options"]["values"]]
 
-        file_value = int_to_bytes(configbin[offset])
+        op_size = len(bytes.fromhex(itm["options"]["values"][0]["data"][2:]))
+        file_value = bytes(configbin[offset:offset+op_size])
 
         if file_value in jvalues:
             index = None
