@@ -168,4 +168,36 @@ Enable/Disable modified Hunting Horn mechanics. When disabled, you have vanilla 
 
 ## File Replacer
 
+TBD
+
 ## Custom Quests
+
+`Custom Quests` tab allows you to backup and inject custom quests into your save. Up to 18 quests can be injected and it supports both `.pat` and `.mib` *(decrypted)*.
+
+To use, place your `.pat` or `.mib` quests in the `quests` folder. Press the `Select` button and open the folder containing `MHP2NDG.BIN` (example: `ms0:/PSP/SAVEDATA/ULUS10391`)
+
+When the save is loaded, you have a few options:
+
+* To backup, select the quests that you wish to backup in the right pane and press the `<---` button. This will backup the quests to the `quests` folder with the extension `.mib.dec`.
+  - **Note:** You can backup challenge quests however you can **NOT** write them back to the save.
+* To delete/make room for new quests, highlight the ones you wish to remove and press the `Remove` button.
+* To add, select the quests in the left pane (up to 18) and press the `--->` button to inject them into your save.
+  - If you added quests to the `quests` folder and dont see them in the left pane, you may have to press the `Rescan folder` button or the quests are encrypted. If the quests are encrypted please decrypt them first.
+
+Once you are happy, press the `Save` button to write the changes.
+
+You may see a message like this pop-up on PPSSPP.
+
+<div align="center">
+
+![saveprompt](https://user-images.githubusercontent.com/5410031/224438314-5c00cd43-c849-4b00-998c-4d7dafb51dfb.png)
+
+</div>
+
+If you do, you can remove it by saving in-game and you'll no longer see the message.
+
+To play your custom quests, go to the guildhall, open your options menu and under `Savedata Quests` toggle the option `ON`. Once enabled talk to a quest giver and open the "Events" tab... you should see your injected quests.
+
+| <img src="https://user-images.githubusercontent.com/5410031/224439333-98330920-1cad-4dc6-9fdf-8fff490f5d1b.png" width="75%"></img> | <img src="https://user-images.githubusercontent.com/5410031/224439336-f390867f-08d0-40e3-bab5-a8b04ca80f8e.png" width="75%"></img> |
+|:---:|:---:|
+| Options Menu | Injected Quests |
