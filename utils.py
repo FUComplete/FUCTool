@@ -370,7 +370,7 @@ def get_filelist(filename):
 
 
 config = get_config_json("res/config.json")
-filelist = get_filelist("res/filelist_2g.csv")
+filelist = get_filelist("res/filelist.csv")
 current_path = Path(sys.executable).parent.resolve()
 resources_path = Path(__file__).resolve().parent
 temp_folder = Path(current_path, "res", "temp")
