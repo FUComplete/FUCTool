@@ -505,7 +505,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         files = utils.read_replace_folder(folderName)
 
         if not files:
-            self.generic_dialog("ERROR: No data folder found.", mode=1, title="Error")
+            self.generic_dialog("ERROR: No files found in folder.", mode=1, title="Error")
             return
 
         lenght = len(files)

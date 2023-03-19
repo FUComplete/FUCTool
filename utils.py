@@ -119,15 +119,12 @@ def read_replace_folder(infolder):
 
     existing_files = []
 
-    # check if the data folder exists
-    if not Path(infolder, "data").exists():
-        return existing_files
-
     for f in infiles:
-        key = PureWindowsPath(f).relative_to(infolder).as_posix()
+        key = Path(f).relative_to(infolder).name
         try:
-            idx = filelist[key]
-            existing_files.append({"path": key, "id": idx})
+            idx = filelist[key][0]
+            full_path = filelist[key][1]
+            existing_files.append({"path": full_path, "id": idx})
         except KeyError:
             continue  # File is not in the csv
 
@@ -143,8 +140,8 @@ def generate_filebin(infolder, outfolder):
     existing_files = []
     for fi in infiles:
         try:
-            key = PureWindowsPath(fi).relative_to(infolder).as_posix()
-            idx = filelist[key]
+            key = Path(fi).relative_to(infolder).name
+            idx = filelist[key][0]
             file_ids.append(idx)
             existing_files.append({"path": fi, "id": idx})
         except KeyError:
@@ -176,7 +173,7 @@ def copy_files(allfiles, outfolder):
 
 def rename_dump_files(outfolder):
     allfiles = glob.glob(f"{outfolder}/*", recursive=True)
-    inv_filelist = dict((v, k) for k, v in filelist.items())
+    inv_filelist = dict((v[0], v[1]) for k, v in filelist.items())
 
     for f in allfiles:
         npath = inv_filelist[Path(f).name]
@@ -364,7 +361,8 @@ def get_filelist(filename):
     with open(filename) as f:
         reader = csv.reader(f)
         for idx, path in reader:
-            nfilelist.setdefault(path, idx)
+            fname = Path(path).name
+            nfilelist.setdefault(fname, [idx, path])    # 0 = ID, 1 = full path
 
     return nfilelist
 
