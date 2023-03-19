@@ -9,7 +9,7 @@ import os
 import shutil
 import sys
 from io import BytesIO
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 
 import bitstring
 import pycdlib
@@ -17,7 +17,7 @@ import pycdlib
 import mhef.psp
 import mhff.psp.data
 
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 
 UMD_MD5HASH = "1f76ee9ccbd6d39158f06e6e5354a5bd"
 PSN_MD5HASH = "cc39d070b2d2c44c9ac8187e00b75dc4"
