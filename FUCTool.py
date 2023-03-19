@@ -78,7 +78,7 @@ class DumpDataBINThread(QtCore.QThread):
         self.filepath = filepath
 
     def run(self):
-        outfolder = Path(self.filepath).parent.joinpath("DATA.BIN_dump")
+        outfolder = Path(self.filepath).parent.joinpath("data_root")
 
         # Check if folder exists already, can cause issues later
         if outfolder.exists():
