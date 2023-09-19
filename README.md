@@ -165,8 +165,9 @@ Enable/Disable modified Hunting Horn mechanics. When disabled, you have vanilla 
 
 **Default is `Disable`**
 
-
-## File Replacer
+<div align="center">
+<h2>File Replacer</h2>
+</div>
 
 `File Replacer` tab lets you generate a `nativePSP` folder that contains all your modified files, which the game will use instead of the built in ones. 
 
@@ -187,7 +188,9 @@ If you want Dos battle themes you will have to extract them from the ISO and pla
 
 * `6552` `6553` `6554` `6555` `6566` `6571`
 
-## Custom Quests
+<div align="center">
+<h2>Custom Quests</h2>
+</div>
 
 `Custom Quests` tab allows you to backup and inject custom quests into your save. Up to 18 quests can be injected and it supports both `.pat` and `.mib` *(decrypted)*.
 
