@@ -186,6 +186,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         logging.getLogger().setLevel(logging.INFO)
         self.patcher_verticalLayout.insertWidget(3, logTextBox.widget)
 
+        # Patcher tab
+        self.psp_go_mem.clicked.connect(self.psp_go_check)
+
         self.patch_button.clicked.connect(self.patch_iso)
         self.iso_button.clicked.connect(self.select_iso)
 
@@ -253,6 +256,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def process3_stderr(self):
         data = self.process3.readAllStandardError()
         self.log_stderr(data)
+
+    def psp_go_check(self):
+        if self.psp_go_mem.isChecked():
+            result = QtWidgets.QMessageBox.question(self, 'PSP Go internal storage remapping',
+                                                    "This is ONLY needed if you're installing the game in a PSP Go internal storage, DO NOT enable it if you aren't. \n\nAre you sure you want to enable it?",
+                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                                    QtWidgets.QMessageBox.No)
+
+            if result == QtWidgets.QMessageBox.No:
+                self.psp_go_mem.setChecked(False)
 
     def select_iso(self):
         options = QtWidgets.QFileDialog.Options()
