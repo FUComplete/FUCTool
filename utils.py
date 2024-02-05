@@ -159,8 +159,8 @@ def generate_filebin(infolder, outfolder):
     if not os.path.isdir(outfolder):
         os.mkdir(outfolder)
 
-    # copy/rename files and save file.bin
-    with open(Path(outfolder, "file.bin"), "wb") as f:
+    # copy/rename files and save FILE.BIN
+    with open(Path(outfolder, "FILE.BIN"), "wb") as f:
         newbin.tofile(f)
 
     copy_files(existing_files, outfolder)

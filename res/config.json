@@ -1,5 +1,5 @@
 {
-	"config.bin": [{
+	"CONFIG.BIN": [{
 		"description": "Some Text",
 		"options": {
 			"offset": "0x000F",

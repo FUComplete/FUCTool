@@ -194,7 +194,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Config Tab
         self.config_options = []
-        for itm in self.config["config.bin"]:
+        for itm in self.config["CONFIG.BIN"]:
             item = QtWidgets.QListWidgetItem(self.config_list)
             item_widget = ConfigWidget(itm["description"], itm["options"])
             item.setSizeHint(item_widget.sizeHint())
@@ -455,8 +455,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def select_config_bin(self):
         options = QtWidgets.QFileDialog.Options()
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select config.bin file", "",
-                                                            "config.bin (config.bin)", options=options)
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select CONFIG.BIN file", "",
+                                                            "CONFIG.BIN (CONFIG.BIN)", options=options)
         if fileName:
             for i, conf in enumerate(utils.read_configs(fileName)):
                 self.config_options[i].combobox.setCurrentIndex(conf)
@@ -513,10 +513,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def generate_nativepsp_folder(self):
         inpath = Path(self.replace_path.text())
-        outpath = Path(inpath).parent.absolute().joinpath('nativePSP')
+        outpath = Path(inpath).parent.absolute().joinpath('NATIVEPSP')
         utils.generate_filebin(inpath, outpath)
 
-        self.generic_dialog(f"nativePSP folder successfully generated at: {outpath}")
+        self.generic_dialog(f"NATIVEPSP folder successfully generated at: {outpath}")
 
     def dump_databin(self):
         options = QtWidgets.QFileDialog.Options()

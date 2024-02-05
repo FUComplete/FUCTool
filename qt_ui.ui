@@ -177,7 +177,7 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string notr="true">Select config.bin file:</string>
+            <string notr="true">Select CONFIG.BIN file:</string>
            </property>
           </widget>
          </item>
@@ -385,7 +385,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string notr="true">Generate nativePSP folder</string>
+            <string notr="true">Generate NATIVEPSP folder</string>
            </property>
           </widget>
          </item>
