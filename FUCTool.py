@@ -260,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def psp_go_check(self):
         if self.psp_go_mem.isChecked():
             result = QtWidgets.QMessageBox.question(self, 'PSP Go internal storage remapping',
-                                                    "This is ONLY needed if you're installing the game in a PSP Go internal storage, DO NOT enable it if you aren't. \n\nAre you sure you want to enable it?",
+                                                    "This is ONLY needed if you're installing the game on a PSP Go's internal storage, DO NOT enable it if you aren't. \n\nAre you sure you want to enable it?",
                                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                     QtWidgets.QMessageBox.No)
 
@@ -292,21 +292,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"UMD: {utils.UMD_MD5HASH}")
             logging.error(f"PSN: {utils.PSN_MD5HASH}")
 
-    def patch_compat(self, iso_path):
+    def patch_psp_go(self, iso_path):
         exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
-        patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
+        patch_path = Path(utils.current_path, "res", "patches", "EF0.xdelta")
         utils.create_temp_folder()
-        niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+        niso_path = Path(utils.temp_folder, iso_path.stem + "_ef0.iso")
         self.current_iso_path = niso_path
 
-        logging.info("UMD ISO found, applying compat patch...")
+        logging.info("Applying PSP Go internal storage patch...")
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
-        self.process2.finished.connect(self.patch_compat_finished)
+        self.process2.finished.connect(self.patch_psp_go_finished)
         self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
 
-    def patch_compat_finished(self):
-        logging.info("Compat patching done.")
+    def patch_psp_go_finished(self):
+        logging.info("PSP Go internal storage patching done.")
         self.process2 = None
 
         self.extract_databin()
@@ -448,8 +448,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         iso_path = Path(self.iso_path.text())
 
-        if self.iso_hash == utils.UMD_MD5HASH:
-            self.patch_compat(iso_path)
+        if self.psp_go_mem.isChecked():
+            self.patch_psp_go(iso_path)
         else:
             self.copy_iso(iso_path)
 
