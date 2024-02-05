@@ -28,24 +28,6 @@ class QTextEditLogger(logging.Handler, QtCore.QObject):
         self.appendPlainText.emit(msg)
 
 
-class OptionalWidget(QtWidgets.QWidget):
-    def __init__(self, label, filename, parent=None):
-        super(OptionalWidget, self).__init__(parent)
-        self.filename = filename
-
-        label = QtWidgets.QLabel(label)
-        self.checkbox = QtWidgets.QCheckBox()
-
-        label.setWordWrap(True)
-
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(label)
-        layout.addWidget(self.checkbox)
-
-        self.mouseReleaseEvent = lambda _: self.checkbox.click()
-        self.setLayout(layout)
-
-
 class ConfigWidget(QtWidgets.QWidget):
     def __init__(self, desc, options, parent=None):
         super(ConfigWidget, self).__init__(parent)
@@ -198,24 +180,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if utils.temp_folder.exists():
             shutil.rmtree(utils.temp_folder)
 
-        # Patcher Tab
-        self.label_3.hide()
-        self.optional_list.hide()
-
         logTextBox = QTextEditLogger(self)
         logTextBox.setFormatter(logging.Formatter('%(levelname)s | %(message)s'))
         logging.getLogger().addHandler(logTextBox)
         logging.getLogger().setLevel(logging.INFO)
-        self.patcher_verticalLayout.insertWidget(4, logTextBox.widget)
-
-        self.optional_patches = []
-        for itm in self.config["optional"]:
-            item = QtWidgets.QListWidgetItem(self.optional_list)
-            item_widget = OptionalWidget(itm["label"], itm["file"])
-            item.setSizeHint(item_widget.sizeHint())
-            self.optional_list.addItem(item)
-            self.optional_list.setItemWidget(item, item_widget)
-            self.optional_patches.append(item_widget)
+        self.patcher_verticalLayout.insertWidget(3, logTextBox.widget)
 
         self.patch_button.clicked.connect(self.patch_iso)
         self.iso_button.clicked.connect(self.select_iso)
@@ -304,7 +273,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if self.iso_hash in [utils.UMD_MD5HASH, utils.PSN_MD5HASH]:
             logging.info("Valid ISO file.")
-            self.optional_list.setEnabled(True)
             self.patch_button.setEnabled(True)
         else:
             logging.error(f"Invalid ISO, your dump should match one of the following md5 hashes:")
@@ -457,14 +425,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_button.setEnabled(True)
         self.iso_button.setEnabled(True)
         self.keep_databin.setEnabled(True)
-        self.optional_list.setEnabled(True)
         self.patch_button.setText("Patch ISO")
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
         self.iso_button.setEnabled(False)
         self.keep_databin.setEnabled(False)
-        self.optional_list.setEnabled(False)
         self.patch_button.setText("Patching...")
 
         iso_path = Path(self.iso_path.text())
@@ -473,9 +439,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.patch_compat(iso_path)
         else:
             self.copy_iso(iso_path)
-
-        # for itm in self.optional_patches:
-        #     print(itm.filename, itm.checkbox.isChecked())
 
     def select_config_bin(self):
         options = QtWidgets.QFileDialog.Options()

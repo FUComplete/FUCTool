@@ -51,8 +51,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>641</width>
-        <height>551</height>
+        <width>631</width>
+        <height>541</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="patcher_verticalLayout">
@@ -100,39 +100,36 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string notr="true">Optional Patches:</string>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string notr="true">Options:</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QListWidget" name="optional_list">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QListWidget::item { border-bottom: 1px solid lightgray; }</string>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
-         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QCheckBox" name="keep_databin">
+              <property name="text">
+               <string notr="true">Keep patched DATA.BIN outside of the ISO (for modders).</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox">
+              <property name="text">
+               <string notr="true">PSP Go internal storage remapping (PSP Go only).</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string notr="true">Output:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="keep_databin">
-         <property name="text">
-          <string notr="true">Keep patched DATA.BIN outside of the ISO (for modders).</string>
          </property>
         </widget>
        </item>
