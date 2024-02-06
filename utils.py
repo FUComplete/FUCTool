@@ -168,7 +168,15 @@ def generate_filebin(infolder, outfolder):
 
 def copy_files(allfiles, outfolder):
     for f in allfiles:
-        shutil.copy2(Path(f['path']), Path(outfolder, f['id']))
+        nbytes = add_size_header(Path(f['path']))
+        write_file_bytes(Path(outfolder, f['id']), nbytes)
+
+
+def add_size_header(path):
+    fbytes = read_file_bytes(path)
+    size = len(fbytes).to_bytes(4, byteorder='little')
+
+    return size + fbytes
 
 
 def rename_dump_files(outfolder):
