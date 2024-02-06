@@ -441,12 +441,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_button.setEnabled(True)
         self.iso_button.setEnabled(True)
         self.keep_databin.setEnabled(True)
+        self.psp_go_mem.setEnabled(True)
         self.patch_button.setText("Patch ISO")
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
         self.iso_button.setEnabled(False)
         self.keep_databin.setEnabled(False)
+        self.psp_go_mem.setEnabled(False)
         self.patch_button.setText("Patching...")
 
         iso_path = Path(self.iso_path.text())
