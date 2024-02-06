@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from PyQt5 import QtCore
@@ -269,7 +270,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def select_iso(self):
         options = QtWidgets.QFileDialog.Options()
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select MHFU ISO file", "", "ISO Files (*.iso)",
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                            "Select MHFU ISO file", "", "ISO Files (*.iso)",
                                                             options=options)
         if fileName:
             self.iso_path.setText(fileName)
@@ -342,7 +344,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.decrypt_databin_thread.endSignal.connect(self.decrypt_databin_finished)
 
-    def decrypt_databin_finished(self, databin_path):
+    def decrypt_databin_finished(self):
         self.decrypt_databin_thread.exit()
 
         old_data_path = Path(utils.temp_folder, "DATA.BIN")
@@ -352,7 +354,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def replace_databin(self):
         exe_path = Path(utils.resources_path, "bin", "UMD-replace.exe")
-        databin_path = Path(utils.temp_folder, "DATA.BIN")
+        databin_path = Path(utils.temp_folder, "DATA.BIN.DEC")
 
         logging.info("Replacing DATA.BIN...")
         self.process1 = QtCore.QProcess()
@@ -363,7 +365,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def replace_databin_finished(self):
         self.process1 = None
 
-        old_data_path = Path(utils.temp_folder, "DATA.BIN")
+        old_data_path = Path(utils.temp_folder, "DATA.BIN.DEC")
         if self.keep_databin.isChecked():
             ndatabin = Path(self.iso_path.text()).parent.joinpath("DATA.BIN")
             shutil.move(old_data_path, ndatabin)
@@ -727,8 +729,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.quests_save_button.setText("Save")
         self.quests_save_button.setEnabled(True)
 
+def exception_hook(exc_type, exc_value, exc_traceback):
+   logging.error(
+       "Uncaught exception",
+       exc_info=(exc_type, exc_value, exc_traceback)
+   )
+   sys.exit()
+
+def set_up_logger():
+    date_time_obj = datetime.now()
+    timestamp_str = date_time_obj.strftime("%d-%b-%Y_%H_%M_%S")
+    filename = 'crash-{}.log'.format(timestamp_str)
+    logging.basicConfig(filename=filename)
+    sys.excepthook = exception_hook
+
 
 if __name__ == "__main__":
+    set_up_logger()
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     app.setStyle("Fusion")
