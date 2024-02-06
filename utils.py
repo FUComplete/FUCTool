@@ -89,7 +89,7 @@ def read_configs(config_path):
     configbin = read_file_bytes(config_path)
     values = []
 
-    for itm in config["config.bin"]:
+    for itm in config["CONFIG.BIN"]:
         offset = int(itm["options"]["offset"], 16)
         jvalues = [bytes.fromhex(i["data"][2:]) for i in itm["options"]["values"]]
 
