@@ -260,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def psp_go_check(self):
         if self.psp_go_mem.isChecked():
             result = QtWidgets.QMessageBox.question(self, 'PSP Go internal storage remapping',
-                                                    "This is ONLY needed if you're installing the game on a PSP Go's internal storage, DO NOT enable it if you aren't. \n\nAre you sure you want to enable it?",
+                                                    "This is ONLY needed if you're installing the game on a PSP Go's internal storage.\n\nDO NOT enable if you're installing the game to a memory stick or a different model PSP/Vita.\n\nAre you sure you want to enable this?",
                                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                     QtWidgets.QMessageBox.No)
 
