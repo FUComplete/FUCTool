@@ -348,25 +348,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         old_data_path = Path(utils.temp_folder, "DATA.BIN")
         os.remove(old_data_path)
 
-        self.patch_align(databin_path)
-
-    def patch_align(self, databin_path):
-        exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
-        patch_path = Path(utils.current_path, "res", "patches", "align.xdelta")
-        ndata_path = Path(utils.temp_folder, "DATA.BIN")
-
-        logging.info("Patching DATA.BIN...")
-        self.process2 = QtCore.QProcess()
-        self.process2.readyReadStandardError.connect(self.process2_stderr)
-        self.process2.finished.connect(self.patch_align_finished)
-        self.process2.start(str(exe_path), ["-d", "-s", str(databin_path), str(patch_path), str(ndata_path)])
-
-    def patch_align_finished(self):
-        self.process2 = None
-
-        data_dec_path = Path(utils.temp_folder, "DATA.BIN.DEC")
-        os.remove(data_dec_path)
-
         self.replace_databin()
 
     def replace_databin(self):
@@ -408,13 +389,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = None
 
         iso_path = Path(self.iso_path.text())
+
+        if self.psp_go_mem.isChecked():
+            self.patch_psp_go(iso_path)
+        else:
+            self.cleanup()
+
+    def patch_psp_go(self, iso_path):
+        exe_path = Path(utils.resources_path, "bin", "xdelta3.exe")
+        patch_path = Path(utils.current_path, "res", "patches", "EF0.xdelta")
+        utils.create_temp_folder()
+        niso_path = Path(utils.temp_folder, iso_path.stem + "_ef0.iso")
+        self.current_iso_path = niso_path
+
+        logging.info("Applying PSP Go internal storage patch...")
+        self.process2 = QtCore.QProcess()
+        self.process2.readyReadStandardError.connect(self.process2_stderr)
+        self.process2.finished.connect(self.patch_psp_go_finished)
+        self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
+
+    def patch_psp_go_finished(self):
+        logging.info("PSP Go internal storage patching done.")
+        self.process2 = None
+
+        self.cleanup()
+
+    def cleanup(self):
+        iso_path = Path(self.iso_path.text())
         niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
 
-        compat_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
-        if compat_path.exists():
-            os.remove(compat_path)
-
-        # Cleanup
         if utils.temp_folder.exists():
             shutil.rmtree(utils.temp_folder)
 
@@ -448,7 +451,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         iso_path = Path(self.iso_path.text())
 
-        if self.psp_go_mem.isChecked():
+        if self.iso_hash == utils.UMD_MD5HASH:
             self.patch_compat(iso_path)
         else:
             self.copy_iso(iso_path)
