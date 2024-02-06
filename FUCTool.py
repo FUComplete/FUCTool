@@ -431,7 +431,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.iso_hash = iso_hash
         self.iso_hash_thread.exit()
 
-        if self.iso_hash == self.config["iso_checksum"]:
+        if self.iso_hash in self.config["iso_checksum"]:
             iso_path = Path(self.iso_path.text())
             niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
             logging.info(f"Patching done, patched ISO is located at: {niso_path}")
