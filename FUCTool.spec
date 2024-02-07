@@ -8,7 +8,7 @@ a = Analysis(
     ['FUCTool.py'],
     pathex=[],
     binaries=[],
-    datas=[("res/FU.bin", "keys"), ("res/P2G.bin", "keys")],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
