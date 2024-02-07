@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from PyQt5 import QtCore
@@ -627,6 +626,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.save_quests = utils.get_quests_in_save(dec)
         self.scan_quests_save()
 
+        self.quests_save_button.setEnabled(True)
+        self.quests_save_button.setText("Save")
+
         self.save_folder_button.setEnabled(True)
         self.save_folder_button.setText("Select")
 
@@ -728,9 +730,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         os.remove(tmp_save)
 
         self.generic_dialog(f"Save changed succesfully.")
-        self.quests_save_button.setText("Save")
-        self.quests_save_button.setEnabled(True)
 
+        save_path = Path(self.save_path.text()).joinpath("MHP2NDG.BIN")
+        self.read_save(save_path)
+
+
+# from datetime import datetime
 #
 # def exception_hook(exc_type, exc_value, exc_traceback):
 #     logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
