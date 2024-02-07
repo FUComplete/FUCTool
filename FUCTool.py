@@ -23,6 +23,8 @@ class QTextEditLogger(logging.Handler, QtCore.QObject):
         self.widget = QtWidgets.QPlainTextEdit(parent)
         self.widget.setReadOnly(True)
         self.appendPlainText.connect(self.widget.appendPlainText)
+        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.widget.setSizePolicy(size_policy)
 
     def emit(self, record):
         msg = self.format(record)

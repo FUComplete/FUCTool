@@ -52,7 +52,7 @@
         <x>0</x>
         <y>0</y>
         <width>641</width>
-        <height>541</height>
+        <height>551</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="patcher_verticalLayout">
@@ -247,7 +247,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="leftMargin">
         <number>4</number>
