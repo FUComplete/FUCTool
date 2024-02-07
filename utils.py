@@ -379,4 +379,5 @@ config = get_config_json("res/config.json")
 filelist = get_filelist("res/filelist.csv")
 current_path = Path(sys.executable).parent.resolve()
 resources_path = Path(__file__).resolve().parent
+bin_path = Path(current_path, "bin")
 temp_folder = Path(current_path, "res", "temp")
