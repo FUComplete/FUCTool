@@ -165,12 +165,32 @@ Enable/Disable modified Hunting Horn mechanics. When disabled, you have vanilla 
 
 **Default is `Disable`**
 
+<div align="center">
+<h2>File Replacer</h2>
+</div>
 
-## File Replacer
+`File Replacer` tab lets you generate a `nativePSP` folder that contains all your modified files, which the game will use instead of the built in ones. 
 
-TBD
+As an example, lets replace the default Lavasioth with a retextured Red Lavasioth.
 
-## Custom Quests
+1. Create a folder called `mods` 
+2. Download the file, extract the zip and place `em83.pac` inside the `mods` folder.
+3. In FUCTool under the `File Replacer` tab, select the `mods` folder. You should see `em83.pac` in the list
+4. Press the `Generate nativePSP folder` button. The `nativePSP` folder will be in the same place that the `mods` folder is.
+5. Copy the `nativePSP` folder to the same location as your `config.bin`... for example `MS0:/FUC/`
+6. Open the `Configuration` tab open your `config.bin` and under the option `File Replacer Path` change the location to `MS0` and save.
+
+Once thats done load up a Lavasioth quest and you should now see the Red Lavasioth.
+
+**NOTE:**
+
+If you want Dos battle themes you will have to extract them from the ISO and place the relevant files into the `nativePSP` folder, those files are:
+
+* `6552` `6553` `6554` `6555` `6566` `6571`
+
+<div align="center">
+<h2>Custom Quests</h2>
+</div>
 
 `Custom Quests` tab allows you to backup and inject custom quests into your save. Up to 18 quests can be injected and it supports both `.pat` and `.mib` *(decrypted)*.
 
