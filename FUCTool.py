@@ -210,14 +210,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.config_bin_button.clicked.connect(self.select_config_bin)
 
         # Replacer Tab
-        header = self.replace_list.horizontalHeader()
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.replace_list.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        self.replace_list.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.replace_folder_button.clicked.connect(self.select_replace_folder)
         self.refresh_replace_button.clicked.connect(self.refresh_list_clicked)
         self.nativepsp_button.clicked.connect(self.generate_nativepsp_folder)
         self.dump_databin_button.clicked.connect(self.dump_databin)
+
+        mods_path = Path(utils.current_path, "mods")
+        if mods_path.exists():
+            self.refresh_replace_list(mods_path)
+
+            self.replace_path.setText(str(mods_path))
+            self.replace_list.setEnabled(True)
+            self.refresh_replace_button.setEnabled(True)
+            self.nativepsp_button.setEnabled(True)
 
         # Quests Tab
         self.quests_folder_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -262,7 +270,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def psp_go_check(self):
         if self.psp_go_mem.isChecked():
             result = QtWidgets.QMessageBox.question(self, 'PSP Go internal storage remapping',
-                                                    "This is ONLY needed if you're installing the game on a PSP Go's internal storage.\n\nDO NOT enable if you're installing the game to a memory stick or a different model PSP/Vita.\n\nAre you sure you want to enable this?",
+                                                    "This is ONLY needed if you're installing the game on a PSP Go's internal storage."
+                                                    "\n\n"
+                                                    "DO NOT enable if you're installing the game to a memory stick or a different model PSP/Vita."
+                                                    "\n\n"
+                                                    "Are you sure you want to enable this?",
                                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                     QtWidgets.QMessageBox.No)
 
@@ -511,8 +523,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             path = QtWidgets.QTableWidgetItem(f["path"])
             self.replace_list.setItem(i, 0, idx)
             self.replace_list.setItem(i, 1, path)
-
-        self.replace_list.resizeRowsToContents()
 
     def refresh_list_clicked(self):
         path = self.replace_path.text()

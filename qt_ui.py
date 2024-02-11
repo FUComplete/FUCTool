@@ -173,7 +173,9 @@ class Ui_MainWindow(object):
         self.replace_list = QtWidgets.QTableWidget(self.verticalLayoutWidget_3)
         self.replace_list.setEnabled(False)
         self.replace_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.replace_list.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.replace_list.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.replace_list.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.replace_list.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.replace_list.setObjectName("replace_list")
         self.replace_list.setColumnCount(2)
         self.replace_list.setRowCount(0)
@@ -183,7 +185,6 @@ class Ui_MainWindow(object):
         item = QtWidgets.QTableWidgetItem()
         item.setText("path")
         self.replace_list.setHorizontalHeaderItem(1, item)
-        self.replace_list.verticalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.replace_list)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -396,6 +397,5 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        self.replace_list.setSortingEnabled(True)
+        pass
 import resources_rc
