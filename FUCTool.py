@@ -755,23 +755,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.read_save(save_path)
 
 
-# from datetime import datetime
-
 def exception_hook(exc_type, exc_value, exc_traceback):
-    logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+    logging.error("Unhandled Exception", exc_info=(exc_type, exc_value, exc_traceback))
     sys.exit()
 
 
-def set_up_logger():
-    # date_time_obj = datetime.now()
-    # timestamp_str = date_time_obj.strftime("%d-%b-%Y_%H_%M_%S")
-    filename = '{}.log'.format("timestamp_str")
-    logging.basicConfig(filename=filename)
+if __name__ == "__main__":
+    logging.basicConfig(filename="output.log", filemode="w+")
     sys.excepthook = exception_hook
 
-
-if __name__ == "__main__":
-    set_up_logger()
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     app.setStyle("Fusion")
