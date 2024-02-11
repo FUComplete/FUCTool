@@ -324,7 +324,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def copy_iso_finished(self, tmp_iso):
         self.copy_iso_thread.exit()
 
-        self.current_iso_path = tmp_iso
+        self.current_iso_path = Path(tmp_iso)
         self.extract_databin()
 
     def extract_databin(self):
@@ -379,8 +379,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def patch_fuc(self):
         exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
-        iso_path = Path(self.iso_path.text())
-        niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
+        niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
         logging.info("Patching ISO...")
         self.process2 = QtCore.QProcess()
@@ -392,40 +391,52 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = None
 
         iso_path = Path(self.iso_path.text())
+        self.current_iso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
         if self.psp_go_mem.isChecked():
-            self.patch_psp_go(iso_path)
+            self.patch_psp_go()
         else:
+            niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
+            shutil.move(self.current_iso_path, niso_path)
+
+            self.current_iso_path = niso_path
             self.cleanup()
 
-    def patch_psp_go(self, iso_path):
+    def patch_psp_go(self):
         exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "EF0.xdelta")
-        utils.create_temp_folder()
-        niso_path = Path(utils.temp_folder, iso_path.stem + "_ef0.iso")
-        self.current_iso_path = niso_path
+
+        # Remove the first ISO, not needed at this point
+        iso_path = Path(self.iso_path.text())
+        tmp_iso = Path(utils.temp_folder, iso_path.name)
+        os.remove(tmp_iso)
+
+        niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_ef0.iso")
 
         logging.info("Applying PSP Go internal storage patch...")
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_psp_go_finished)
-        self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
+        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
     def patch_psp_go_finished(self):
         logging.info("PSP Go internal storage patching done.")
         self.process2 = None
 
+        iso_path = Path(self.iso_path.text())
+        self.current_iso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_ef0.iso")
+        niso_path = Path(iso_path.parent, iso_path.stem + "_FUC_ef0.iso")
+        shutil.move(self.current_iso_path, niso_path)
+
+        self.current_iso_path = niso_path
         self.cleanup()
 
     def cleanup(self):
-        iso_path = Path(self.iso_path.text())
-        niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
-
         if utils.temp_folder.exists():
             shutil.rmtree(utils.temp_folder)
 
         logging.info("Checking patched ISO...")
-        self.iso_hash_thread = ISOHashThread(niso_path)
+        self.iso_hash_thread = ISOHashThread(self.current_iso_path)
         self.iso_hash_thread.start()
 
         self.iso_hash_thread.endSignal.connect(self.iso_hash_finished2)
@@ -435,9 +446,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.iso_hash_thread.exit()
 
         if self.iso_hash in self.config["iso_checksum"]:
-            iso_path = Path(self.iso_path.text())
-            niso_path = Path(iso_path.parent, iso_path.stem + "_FUC.iso")
-            logging.info(f"Patching done, patched ISO is located at: {niso_path}")
+            logging.info(f"Patching done, patched ISO is located at: {self.current_iso_path}")
         else:
             logging.error(f"Patched ISO doesn't match the checksum, try again.")
 
@@ -446,6 +455,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.keep_databin.setEnabled(True)
         self.psp_go_mem.setEnabled(True)
         self.patch_button.setText("Patch ISO")
+        self.current_iso_path = None
 
     def patch_iso(self):
         self.patch_button.setEnabled(False)
@@ -736,22 +746,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 # from datetime import datetime
-#
-# def exception_hook(exc_type, exc_value, exc_traceback):
-#     logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-#     sys.exit()
-#
-#
-# def set_up_logger():
-#     date_time_obj = datetime.now()
-#     timestamp_str = date_time_obj.strftime("%d-%b-%Y_%H_%M_%S")
-#     filename = '{}.log'.format(timestamp_str)
-#     logging.basicConfig(filename=filename)
-#     sys.excepthook = exception_hook
+
+def exception_hook(exc_type, exc_value, exc_traceback):
+    logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+    sys.exit()
+
+
+def set_up_logger():
+    # date_time_obj = datetime.now()
+    # timestamp_str = date_time_obj.strftime("%d-%b-%Y_%H_%M_%S")
+    filename = '{}.log'.format("timestamp_str")
+    logging.basicConfig(filename=filename)
+    sys.excepthook = exception_hook
 
 
 if __name__ == "__main__":
-    # set_up_logger()
+    set_up_logger()
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     app.setStyle("Fusion")
