@@ -220,9 +220,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         mods_path = Path(utils.current_path, "mods")
         if mods_path.exists():
+            self.replace_path.setText(str(mods_path))
             self.refresh_replace_list(mods_path)
 
-            self.replace_path.setText(str(mods_path))
             self.replace_list.setEnabled(True)
             self.refresh_replace_button.setEnabled(True)
             self.nativepsp_button.setEnabled(True)
@@ -511,7 +511,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         files = utils.read_replace_folder(folderName)
 
         if not files:
-            self.generic_dialog("ERROR: No files found in folder.", mode=1, title="Error")
+            mods_path = Path(utils.current_path, "mods")
+            if Path(self.replace_path.text()) != mods_path:
+                self.generic_dialog("ERROR: No files found in folder.", mode=1, title="Error")
+
             return
 
         lenght = len(files)
@@ -532,9 +535,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.ShowDirsOnly)
         folderName = QtWidgets.QFileDialog.getExistingDirectory(self, "Select mods folder", options=options)
         if folderName:
+            self.replace_path.setText(folderName)
             self.refresh_replace_list(folderName)
 
-            self.replace_path.setText(folderName)
             self.replace_list.setEnabled(True)
             self.refresh_replace_button.setEnabled(True)
             self.nativepsp_button.setEnabled(True)
