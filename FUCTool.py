@@ -508,6 +508,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.generic_dialog("Configuration saved successfully.")
 
     def refresh_replace_list(self, folderName):
+        self.replace_list.clearContents()
+        self.replace_list.setRowCount(0)
+        self.replace_status.clear()
+
         files = utils.read_replace_folder(folderName)
 
         if not files:
