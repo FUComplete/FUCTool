@@ -5,7 +5,6 @@ import csv
 import glob
 import hashlib
 import json
-import logging
 import os
 import shutil
 import sys
