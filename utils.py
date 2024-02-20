@@ -5,6 +5,7 @@ import csv
 import glob
 import hashlib
 import json
+import logging
 import os
 import shutil
 import sys
@@ -290,8 +291,11 @@ def get_quests_in_save(save_file):
 
 
 def encrypt_quest(quest):
-    qc = mhef.psp.QuestCipher(mhef.psp.MHP2G_JP)
-    enc = qc.encrypt(quest)
+    enc = bytes(bytearray(32))
+
+    if len(quest) > 0:
+        qc = mhef.psp.QuestCipher(mhef.psp.MHP2G_JP)
+        enc = qc.encrypt(quest)
 
     return enc
 
