@@ -59,7 +59,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8 = QtWidgets.QVBoxLayout()
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.keep_databin = QtWidgets.QCheckBox(self.groupBox_2)
-        self.keep_databin.setText("Keep patched DATA.BIN outside of the ISO (for modders).")
+        self.keep_databin.setText("Extract patched DATA.BIN after patching (for modders).")
         self.keep_databin.setObjectName("keep_databin")
         self.verticalLayout_8.addWidget(self.keep_databin)
         self.psp_go_mem = QtWidgets.QCheckBox(self.groupBox_2)

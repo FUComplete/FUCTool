@@ -350,6 +350,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.extract_databin_thread.exit()
         self.decrypt_databin(databin_path)
 
+    def extract_patched_databin(self):
+        logging.info("Extracting patched DATA.BIN...")
+        self.extract_databin_thread = ExtractDATABINThread(self.current_iso_path)
+        self.extract_databin_thread.start()
+
+        self.extract_databin_thread.endSignal.connect(self.extract_patched_databin_finished)
+
+    def extract_patched_databin_finished(self):
+        self.extract_databin_thread.exit()
+
+        data_bin_path = Path(utils.temp_folder, "DATA.BIN")
+        ndatabin = Path(self.iso_path.text()).parent.joinpath("DATA.BIN")
+
+        shutil.move(data_bin_path, ndatabin)
+        logging.info(f"DATA.BIN moved to: {ndatabin}")
+
+        self.cleanup()
+
     def decrypt_databin(self, databin_path):
         logging.info("Decrypting DATA.BIN (this may take a few minutes)...")
         self.decrypt_databin_thread = DecryptDATABINThread(databin_path)
@@ -378,13 +396,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def replace_databin_finished(self):
         self.process1 = None
 
-        old_data_path = Path(utils.temp_folder, "DATA.BIN.DEC")
-        if self.keep_databin.isChecked():
-            ndatabin = Path(self.iso_path.text()).parent.joinpath("DATA.BIN")
-            shutil.move(old_data_path, ndatabin)
-            logging.info(f"DATA.BIN moved to: {ndatabin}")
-        else:
-            os.remove(old_data_path)
+        dec_data_path = Path(utils.temp_folder, "DATA.BIN.DEC")
+        os.remove(dec_data_path)
 
         self.patch_fuc()
 
@@ -412,7 +425,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             shutil.move(self.current_iso_path, niso_path)
 
             self.current_iso_path = niso_path
-            self.cleanup()
+
+            if self.keep_databin.isChecked():
+                self.extract_patched_databin()
+            else:
+                self.cleanup()
 
     def patch_psp_go(self):
         exe_path = Path(utils.bin_path, "xdelta3.exe")
@@ -441,7 +458,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         shutil.move(self.current_iso_path, niso_path)
 
         self.current_iso_path = niso_path
-        self.cleanup()
+
+        if self.keep_databin.isChecked():
+            self.extract_patched_databin()
+        else:
+            self.cleanup()
 
     def cleanup(self):
         if utils.temp_folder.exists():
