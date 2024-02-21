@@ -438,6 +438,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Remove the first ISO, not needed at this point
         iso_path = Path(self.iso_path.text())
         tmp_iso = Path(utils.temp_folder, iso_path.name)
+
+        if not tmp_iso.exists():
+            tmp_iso = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
+
         os.remove(tmp_iso)
 
         niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_ef0.iso")
