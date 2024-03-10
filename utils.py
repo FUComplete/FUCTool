@@ -343,10 +343,14 @@ def add_quests_to_save(save, quests):
         for j in range(padding):
             save[offsets[i]+qsize+j] = 0x00
 
-        # Quest filename
-        fname = f"m{q['qid']}.mib"
-        nsize = len(fname)
-        fname = fname.encode()
+        if q['qid']:
+            # Quest filename
+            fname = f"m{q['qid']}.mib"
+            nsize = len(fname)
+            fname = fname.encode()
+        else:
+            nsize = 0
+            fname = ""
 
         noff = offsets[i] + QUESTS_SIZE - 0x10
         for j in range(nsize):
