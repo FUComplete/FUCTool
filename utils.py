@@ -381,8 +381,11 @@ def get_filelist(filename):
 
     return nfilelist
 
+if sys.platform.startswith('linux'):
+    current_path = Path(__file__).parent.resolve()
+else:
+    current_path = Path(sys.executable).parent.resolve()
 
-current_path = Path(sys.executable).parent.resolve()
 resources_path = Path(current_path, "res")
 bin_path = Path(current_path, "bin")
 temp_folder = resources_path.joinpath("temp")
