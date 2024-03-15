@@ -393,6 +393,12 @@ else:
 
 resources_path = Path(current_path, "res")
 bin_path = Path(current_path, "bin")
-temp_folder = resources_path.joinpath("temp")
+
+if is_linux():
+    # Can't create dirs inside AppImage
+    temp_folder = Path.home() / ".cache/FUCTool"
+else:
+    temp_folder = resources_path.joinpath("temp")
+
 config = get_config_json(resources_path.joinpath("config.json"))
 filelist = get_filelist(resources_path.joinpath("filelist.csv"))

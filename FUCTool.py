@@ -415,7 +415,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
-        logging.info("not dead")
         logging.info("Patching ISO...")
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
