@@ -387,18 +387,16 @@ def is_linux() -> bool:
 
 
 if is_linux():
-    current_path = Path(__file__).parent.resolve()
+    argv0 = os.environ.get("ARGV0")
+    if argv0:
+        current_path = Path(argv0).parent.resolve()
+    else:
+        current_path = Path(__file__).parent.resolve()
 else:
     current_path = Path(sys.executable).parent.resolve()
 
 resources_path = Path(current_path, "res")
 bin_path = Path(current_path, "bin")
-
-if is_linux():
-    # Can't create dirs inside AppImage
-    temp_folder = Path.home() / ".cache/FUCTool"
-else:
-    temp_folder = resources_path.joinpath("temp")
-
+temp_folder = resources_path.joinpath("temp")
 config = get_config_json(resources_path.joinpath("config.json"))
 filelist = get_filelist(resources_path.joinpath("filelist.csv"))

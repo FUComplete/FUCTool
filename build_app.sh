@@ -62,7 +62,7 @@ mkdir -p "${SRC}/bin"
 cp "${TOOLS}/UMD-replace/UMD-replace" "${SRC}/bin/"
 
 cd "${ROOT}"
-rsync -aP FUCTool.py FUCTool.spec qt_ui.* utils.py resources* res "${SRC}"
+rsync -aP FUCTool.py FUCTool.spec qt_ui.* utils.py resources* "${SRC}"
 
 if [ ! -f "${TOOLS}/appimagetool" ]; then
     wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
