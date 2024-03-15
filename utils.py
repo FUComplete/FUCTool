@@ -390,13 +390,15 @@ if is_linux():
     argv0 = os.environ.get("ARGV0")
     if argv0:
         current_path = Path(argv0).parent.resolve()
+        bin_path = Path(__file__).parent / "bin"
     else:
         current_path = Path(__file__).parent.resolve()
+        bin_path = Path(current_path, "bin")
 else:
     current_path = Path(sys.executable).parent.resolve()
+    bin_path = Path(current_path, "bin")
 
 resources_path = Path(current_path, "res")
-bin_path = Path(current_path, "bin")
 temp_folder = resources_path.joinpath("temp")
 config = get_config_json(resources_path.joinpath("config.json"))
 filelist = get_filelist(resources_path.joinpath("filelist.csv"))
