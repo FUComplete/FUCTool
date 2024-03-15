@@ -50,6 +50,17 @@ if [ ! -d "${TOOLS}/mhff" ]; then
     "${APPUSR}/bin/pip3" install -e "${TOOLS}/mhff"
 fi
 
+if [ ! -d "${TOOLS}/UMD-replace" ]; then
+    git clone https://github.com/Snakes128/UMD-replace_x64 "${TOOLS}/UMD-replace"
+    cd "${TOOLS}/UMD-replace"
+    sed -i 's/_fseeki64/fseeko64/g' UMDReplace_x64.cpp
+    sed -i 's/_ftelli64/ftello64/g' UMDReplace_x64.cpp
+    gcc --std=c++11 UMDReplace_x64.cpp -o UMD-replace
+fi
+
+mkdir -p "${SRC}/bin"
+cp "${TOOLS}/UMD-replace/UMD-replace" "${SRC}/bin/"
+
 cd "${ROOT}"
 rsync -aP FUCTool.py FUCTool.spec qt_ui.* utils.py resources* res "${SRC}"
 

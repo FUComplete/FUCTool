@@ -381,7 +381,12 @@ def get_filelist(filename):
 
     return nfilelist
 
-if sys.platform.startswith('linux'):
+
+def is_linux() -> bool:
+    return sys.platform.startswith('linux')
+
+
+if is_linux():
     current_path = Path(__file__).parent.resolve()
 else:
     current_path = Path(sys.executable).parent.resolve()

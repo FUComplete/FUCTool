@@ -318,7 +318,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_compat_finished)
-        self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
+
+        if utils.is_linux():
+            exe_str = "xdelta3"
+        else:
+            exe_str = str(exe_path)
+
+        self.process2.start(exe_str, ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
 
     def patch_compat_finished(self):
         logging.info("Compat patching done.")
@@ -384,7 +390,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.replace_databin()
 
     def replace_databin(self):
-        exe_path = Path(utils.bin_path, "UMD-replace.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "UMD-replace")
+        else:
+            exe_path = Path(utils.bin_path, "UMD-replace.exe")
         databin_path = Path(utils.temp_folder, "DATA.BIN.DEC")
 
         logging.info("Replacing DATA.BIN...")
@@ -406,11 +415,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
+        logging.info("not dead")
         logging.info("Patching ISO...")
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_fuc_finished)
-        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
+
+        if utils.is_linux():
+            exe_str = "xdelta3"
+        else:
+            exe_str = str(exe_path)
+
+        self.process2.start(exe_str, ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
     def patch_fuc_finished(self):
         self.process2 = None
@@ -450,7 +466,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_psp_go_finished)
-        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
+
+        if utils.is_linux():
+            exe_str = "xdelta3"
+        else:
+            exe_str = str(exe_path)
+
+        self.process2.start(exe_str, ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
     def patch_psp_go_finished(self):
         logging.info("PSP Go internal storage patching done.")
