@@ -308,7 +308,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"PSN: {utils.PSN_MD5HASH}")
 
     def patch_compat(self, iso_path):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
         utils.create_temp_folder()
         niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
@@ -318,13 +321,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_compat_finished)
-
-        if utils.is_linux():
-            exe_str = "xdelta3"
-        else:
-            exe_str = str(exe_path)
-
-        self.process2.start(exe_str, ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
+        self.process2.start(str(exe_path), ["-d", "-s", str(iso_path), str(patch_path), str(niso_path)])
 
     def patch_compat_finished(self):
         logging.info("Compat patching done.")
@@ -411,7 +408,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_fuc()
 
     def patch_fuc(self):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
@@ -419,13 +419,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_fuc_finished)
-
-        if utils.is_linux():
-            exe_str = "xdelta3"
-        else:
-            exe_str = str(exe_path)
-
-        self.process2.start(exe_str, ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
+        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
     def patch_fuc_finished(self):
         self.process2 = None
@@ -447,7 +441,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.cleanup()
 
     def patch_psp_go(self):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "EF0.xdelta")
 
         # Remove the first ISO, not needed at this point
@@ -465,13 +462,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.process2 = QtCore.QProcess()
         self.process2.readyReadStandardError.connect(self.process2_stderr)
         self.process2.finished.connect(self.patch_psp_go_finished)
-
-        if utils.is_linux():
-            exe_str = "xdelta3"
-        else:
-            exe_str = str(exe_path)
-
-        self.process2.start(exe_str, ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
+        self.process2.start(str(exe_path), ["-d", "-s", str(self.current_iso_path), str(patch_path), str(niso_path)])
 
     def patch_psp_go_finished(self):
         logging.info("PSP Go internal storage patching done.")
@@ -789,7 +780,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         shutil.copy2(og_save, backup_save)
 
         keypath = Path(utils.resources_path, "keys", self.save_key)
-        exe_path = Path(utils.bin_path, "SED-PC.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "SED-PC")
+        else:
+            exe_path = Path(utils.bin_path, "SED-PC.exe")
 
         self.process3 = QtCore.QProcess()
         self.process3.readyReadStandardError.connect(self.process3_stderr)
