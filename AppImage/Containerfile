@@ -1,0 +1,44 @@
+FROM gentoo/stage3:nomultilib
+
+RUN echo 'GENTOO_MIRRORS="https://ftp.lysator.liu.se/gentoo/"' >> /etc/portage/make.conf
+RUN emerge-webrsync && emerge --sync && getuto
+
+RUN mkdir /{app,out}
+RUN emerge -j5 -g media-gfx/imagemagick dev-vcs/git dev-util/desktop-file-utils
+RUN cd /opt && wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
+    -O appimage-tool \
+    && chmod +x appimage-tool && ./appimage-tool --appimage-extract \
+    && rm appimage-tool && mv squashfs-root appimage-tool && chmod +x appimage-tool/AppRun
+
+RUN echo 'dev-lang/python -* ensurepip ssl' >> /etc/portage/package.use/python
+RUN echo '*/* -readline -ncurses' >> /etc/portage/package.use/all
+RUN emerge -j5 -G1 --root=/app gcc
+RUN emerge -j5 -g --root=/app python:3.11
+RUN emerge -j5 -g --root=/app dev-python/pip
+
+RUN /app/usr/bin/python3.11 -m pip install --break-system-packages \
+    pyqt5 bitstring pycdlib git+https://github.com/IncognitoMan/mhef.git
+
+WORKDIR /app/usr/src
+RUN mkdir bin
+RUN USE="lzma" emerge -j5 -g --root=/app xdelta \
+    && cd bin && ln -s ../../bin/xdelta3 xdelta3
+
+RUN git clone https://github.com/IncognitoMan/mhff.git mhff
+
+RUN git clone https://github.com/Snakes128/UMD-replace_x64 /tmp/umdr \
+    && cd /tmp/umdr \
+    && sed -i 's/_fseeki64/fseeko64/g' *.cpp \
+    && sed -i 's/_ftelli64/ftello64/g' *.cpp \
+    && gcc --std=c++11 UMDReplace_x64.cpp -o UMD-replace \
+    && mv UMD-replace /app/usr/src/bin
+
+RUN git clone https://github.com/BrianBTB/SED-PC.git /tmp/sedpc \
+    && cd /tmp/sedpc/SED && sed -i 's/key > 0/key != 0/' main.cpp \
+    && make && mv psp-sed /app/usr/src/bin/SED-PC
+
+COPY FUCTool.py FUCTool.spec qt_ui.* utils.py resources* .
+COPY icon.ico .
+COPY AppImage/AppRun AppImage/FUCTool.desktop /app
+RUN convert icon.ico -thumbnail 256x256 -alpha on -background none -flatten /app/FUCTool-256x256.png
+RUN cd /out && ARCH=x86_64 /opt/appimage-tool/AppRun /app

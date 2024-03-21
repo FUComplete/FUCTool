@@ -308,7 +308,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logging.error(f"PSN: {utils.PSN_MD5HASH}")
 
     def patch_compat(self, iso_path):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "compat.xdelta")
         utils.create_temp_folder()
         niso_path = Path(utils.temp_folder, iso_path.stem + "_compat.iso")
@@ -384,7 +387,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.replace_databin()
 
     def replace_databin(self):
-        exe_path = Path(utils.bin_path, "UMD-replace.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "UMD-replace")
+        else:
+            exe_path = Path(utils.bin_path, "UMD-replace.exe")
         databin_path = Path(utils.temp_folder, "DATA.BIN.DEC")
 
         logging.info("Replacing DATA.BIN...")
@@ -402,7 +408,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.patch_fuc()
 
     def patch_fuc(self):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "FUC.xdelta")
         niso_path = Path(utils.temp_folder, self.current_iso_path.stem + "_FUC.iso")
 
@@ -432,7 +441,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.cleanup()
 
     def patch_psp_go(self):
-        exe_path = Path(utils.bin_path, "xdelta3.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "xdelta3")
+        else:
+            exe_path = Path(utils.bin_path, "xdelta3.exe")
         patch_path = Path(utils.current_path, "res", "patches", "EF0.xdelta")
 
         # Remove the first ISO, not needed at this point
@@ -768,7 +780,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         shutil.copy2(og_save, backup_save)
 
         keypath = Path(utils.resources_path, "keys", self.save_key)
-        exe_path = Path(utils.bin_path, "SED-PC.exe")
+        if utils.is_linux():
+            exe_path = Path(utils.bin_path, "SED-PC")
+        else:
+            exe_path = Path(utils.bin_path, "SED-PC.exe")
 
         self.process3 = QtCore.QProcess()
         self.process3.readyReadStandardError.connect(self.process3_stderr)
