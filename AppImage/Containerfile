@@ -1,4 +1,4 @@
-FROM gentoo/stage3:nomultilib
+FROM docker.io/gentoo/stage3:nomultilib
 
 RUN echo 'GENTOO_MIRRORS="https://ftp.lysator.liu.se/gentoo/"' >> /etc/portage/make.conf
 RUN emerge-webrsync && emerge --sync && getuto
